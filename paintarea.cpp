@@ -30,7 +30,9 @@ void PaintArea::ClearImage()
 void PaintArea::mouseMoveEvent(QMouseEvent *event)
 {
     event->ignore();
-    Canvas.DrawLine(QPoint(0, 0), QPoint(700, 500), Qt::red);
+    if (startPoint == QPoint(0,0))
+        return;
+    Canvas.DrawLine(startPoint, event->pos(), Qt::red);
     image = Canvas.GetCanvas();
     update();
 }
@@ -41,4 +43,14 @@ void PaintArea::paintEvent(QPaintEvent *event)
     painter.begin(this);
     painter.drawImage(0, 0, image);
     painter.end();
+}
+
+void PaintArea::mousePressEvent(QMouseEvent *event)
+{
+    startPoint = event->pos();
+}
+
+void PaintArea::mouseReleaseEvent(QMouseEvent *event)
+{
+    startPoint = QPoint(0,0);
 }

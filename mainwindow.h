@@ -10,7 +10,15 @@ class MainWindow : public QWidget
     
 private:
     PaintArea *paintArea;
+    QWidget* leftPanelWidget;
+    QVBoxLayout* leftPanelLayout;
     QStatusBar *statusBar;
+    QCheckBox *showGridCheckBox;
+    QSpinBox *gapSizeSpinBox;
+    QPushButton *colorChooseButton;
+    QComboBox *shapeChooserComboBox;
+
+    QStringList shapeList;
 
 protected:
     void mouseMoveEvent(QMouseEvent *);

@@ -15,7 +15,6 @@ public:
     Graphics();
     void SetCanvas(QImage canvas);
     QImage GetCanvas();
-    uint QColorToUInt(QColor color);
     void DrawLine(int x1, int y0, const int x2, const int y2, const QColor color);
     void DrawLine(const QPoint begin, const QPoint end, const QColor color);
     void SetPixel(const QPoint point, const QColor color);

@@ -19,13 +19,16 @@ public slots:
 //    void ShowGrid();
 
 protected:
-    void paintEvent(QPaintEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+    void paintEvent(QPaintEvent* );
+    void mouseMoveEvent(QMouseEvent* );
+    void mousePressEvent(QMouseEvent* );
+    void mouseReleaseEvent(QMouseEvent *);
 
 private:
     QImage image;
     bool showGrid;
     Graphics Canvas;
+    QPoint startPoint;
     
 };
 

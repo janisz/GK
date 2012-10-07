@@ -34,11 +34,6 @@ void Graphics::SetPixel(const int x, const int y, const QColor color)
     SetPixel(QPoint(x, y), color);
 }
 
-uint Graphics::QColorToUInt(QColor color)
-{
-    return (((color.red() << 8) + color.green()) << 8) + color.blue();
-}
-
 
 void Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color)
 {
