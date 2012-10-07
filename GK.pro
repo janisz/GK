@@ -9,10 +9,11 @@ QT       += core gui
 TARGET = GK
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
-    paintarea.cpp
+    paintarea.cpp \
+    Graphics/graphics.cpp
 
 HEADERS  += mainwindow.h \
-    paintarea.h
+    paintarea.h \
+    Graphics/graphics.h

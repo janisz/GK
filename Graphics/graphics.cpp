@@ -4,91 +4,73 @@ Graphics::Graphics()
 {
 }
 
-QPointList Graphics::DrawLine(const int x1, const int y1, const int x2, const int y2)
+void Graphics::SetCanvas(QImage canvas)
 {
-    QPointList pointList;
-
-    //Z wikipedi    http://pl.wikipedia.org/wiki/Algorytm_Bresenhama
-    // zmienne pomocnicze
-    int d, dx, dy, ai, bi, xi, yi;
-    int x = x1, y = y1;
-    // ustalenie kierunku rysowania
-    if (x1 < x2)
-    {
-        xi = 1;
-        dx = x2 - x1;
-    }
-    else
-    {
-        xi = -1;
-        dx = x1 - x2;
-    }
-    // ustalenie kierunku rysowania
-    if (y1 < y2)
-    {
-        yi = 1;
-        dy = y2 - y1;
-    }
-    else
-    {
-        yi = -1;
-        dy = y1 - y2;
-    }
-    pointList.reserve(dx + dy);
-    // pierwszy piksel
-    pointList.append(QPoint(x, y));
-    // oś wiodąca OX
-    if (dx > dy)
-    {
-        ai = (dy - dx) * 2;
-        bi = dy * 2;
-        d = bi - dx;
-        // pętla po kolejnych x
-        while (x != x2)
-        {
-            // test współczynnika
-            if (d >= 0)
-            {
-                x += xi;
-                y += yi;
-                d += ai;
-            }
-            else
-            {
-                d += bi;
-                x += xi;
-            }
-            pointList.append(QPoint(x, y));
-        }
-    }
-    // oś wiodąca OY
-    else
-    {
-        ai = ( dx - dy ) * 2;
-        bi = dx * 2;
-        d = bi - dy;
-        // pętla po kolejnych y
-        while (y != y2)
-        {
-            // test współczynnika
-            if (d >= 0)
-            {
-                x += xi;
-                y += yi;
-                d += ai;
-            }
-            else
-            {
-                d += bi;
-                y += yi;
-            }
-            pointList.append(QPoint(x, y));
-        }
-    }
-    return pointList;
+    this->canvas = canvas;
 }
 
-QPointList Graphics::DrawLine( const QPoint begin, const QPoint end)
+QImage Graphics::GetCanvas()
 {
-    return DrawLine(begin.x(), begin.y(), begin.y(), end.y());
+    canvas.save("/tmp/test.png", "PNG");
+    return (this->canvas);
+}
+
+bool Graphics::isPointInRect(QPoint point, QRect rect)
+{
+    return (point.x() > rect.left() && point.x() < rect.right() &&
+            point.y() > rect.top()  && point.y() < rect.bottom());
+}
+
+void Graphics::SetPixel(const QPoint point, const QColor color)
+{
+    qDebug() << point << color;
+    if (isPointInRect(point, canvas.rect()))
+        canvas.setPixel(point, qRgb(color.red(), color.green(), color.blue()));
+
+}
+
+void Graphics::SetPixel(const int x, const int y, const QColor color)
+{
+    SetPixel(QPoint(x, y), color);
+}
+
+uint Graphics::QColorToUInt(QColor color)
+{
+    return (((color.red() << 8) + color.green()) << 8) + color.blue();
+}
+
+
+void Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color)
+{
+    int dx = abs(x1-x0);
+    int dy = abs(y1-y0);
+    int sx = (x0 < x1) ? 1 : -1;
+    int sy = (y0 < y1) ? 1 : -1;
+    int err = dx-dy;
+
+    while (true)
+    {
+        SetPixel(x0,y0, color);
+
+        if ((x0 == x1) && (y0 == y1))
+                break;
+
+        int e2 = 2*err;
+
+        if (e2 > -dy)
+        {
+            err = err - dy;
+            x0 = x0 + sx;
+        }
+        if (e2 <  dx)
+        {
+            err = err + dx;
+            y0 = y0 + sy;
+        }
+    }
+}
+
+void Graphics::DrawLine( const QPoint begin, const QPoint end, const QColor color)
+{
+    return DrawLine(begin.x(), begin.y(), end.x(), end.y(), color);
 }

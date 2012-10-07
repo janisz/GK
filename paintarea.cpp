@@ -5,6 +5,7 @@ PaintArea::PaintArea(QWidget *parent) :
 {
     QImage newImage(800, 600, QImage::Format_ARGB32);
     image = newImage;
+    Canvas.SetCanvas(image);
     setFixedSize(800, 600);
     ClearImage();
     setMouseTracking(true);
@@ -29,6 +30,9 @@ void PaintArea::ClearImage()
 void PaintArea::mouseMoveEvent(QMouseEvent *event)
 {
     event->ignore();
+    Canvas.DrawLine(QPoint(0, 0), QPoint(700, 500), Qt::red);
+    image = Canvas.GetCanvas();
+    update();
 }
 
 void PaintArea::paintEvent(QPaintEvent *event)

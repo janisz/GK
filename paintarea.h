@@ -2,6 +2,7 @@
 #define PAINTAREA_H
 
 #include <QtGui>
+#include "Graphics/graphics.h"
 
 class PaintArea : public QWidget
 {
@@ -24,6 +25,7 @@ protected:
 private:
     QImage image;
     bool showGrid;
+    Graphics Canvas;
     
 };
 
