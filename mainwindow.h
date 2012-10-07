@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QtGui>
+#include "Globals.h"
 #include "paintarea.h"
 
 class MainWindow : public QWidget
@@ -28,6 +29,12 @@ protected:
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+public slots:
+    void ChangeColor();
+    void ChangeShape();
+    void ShowGrid();
+
 };
 
 #endif // MAINWINDOW_H

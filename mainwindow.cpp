@@ -41,7 +41,27 @@ MainWindow::MainWindow(QWidget *parent)
     leftPanelLayout->addWidget(shapeChooserComboBox);
 
 
+    connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
+    connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
+    connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeColor()));
+
     setMouseTracking(true);
+}
+
+void MainWindow::ChangeColor()
+{
+    paintArea->SetLineColor(QColorDialog::getColor(Qt::red, this ));
+}
+
+void MainWindow::ChangeShape()
+{
+    paintArea->SetCurrentShape((Shape)shapeChooserComboBox->currentIndex());
+}
+
+void MainWindow::ShowGrid()
+{
+    paintArea->SetGridVisibility(showGridCheckBox->isChecked());
+    paintArea->SetGridGap(gapSizeSpinBox->value());
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)

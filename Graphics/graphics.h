@@ -17,6 +17,7 @@ public:
     QImage GetCanvas();
     void DrawLine(int x1, int y0, const int x2, const int y2, const QColor color);
     void DrawLine(const QPoint begin, const QPoint end, const QColor color);
+    void DrawGrid(const int);
     void SetPixel(const QPoint point, const QColor color);
     void SetPixel(const int x, const int y, const QColor color);
     bool isPointInRect(QPoint point, QRect rect);

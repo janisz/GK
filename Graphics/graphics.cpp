@@ -23,7 +23,7 @@ bool Graphics::isPointInRect(QPoint point, QRect rect)
 
 void Graphics::SetPixel(const QPoint point, const QColor color)
 {
-    qDebug() << point << color;
+//    qDebug() << point << color;
     if (isPointInRect(point, canvas.rect()))
         canvas.setPixel(point, qRgb(color.red(), color.green(), color.blue()));
 
@@ -68,4 +68,17 @@ void Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor
 void Graphics::DrawLine( const QPoint begin, const QPoint end, const QColor color)
 {
     return DrawLine(begin.x(), begin.y(), end.x(), end.y(), color);
+}
+
+void Graphics::DrawGrid(const int gap)
+{
+    for (int i=0;i<canvas.width(); i+=gap)
+    {
+        DrawLine(i, 0, i, canvas.height()-1, Qt::gray);
+    }
+
+    for (int i=0;i<canvas.height();i+=gap)
+    {
+        DrawLine(0, i, canvas.width()-1, i, Qt::gray);
+    }
 }

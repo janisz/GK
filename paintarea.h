@@ -2,6 +2,7 @@
 #define PAINTAREA_H
 
 #include <QtGui>
+#include "Globals.h"
 #include "Graphics/graphics.h"
 
 class PaintArea : public QWidget
@@ -13,10 +14,13 @@ public:
 public:
 //    bool SaveImage(const QString &fileName, const char *fileFormat);
     bool LoadImage(const QString &fileName);
+    void SetLineColor(QColor);
+    void SetGridVisibility(bool);
+    void SetGridGap(int);
+    void SetCurrentShape(Shape);
 
 public slots:
     void ClearImage();
-//    void ShowGrid();
 
 protected:
     void paintEvent(QPaintEvent* );
@@ -25,10 +29,13 @@ protected:
     void mouseReleaseEvent(QMouseEvent *);
 
 private:
-    QImage image;
-    bool showGrid;
     Graphics Canvas;
+    QImage image;
+    QColor lineColor;
     QPoint startPoint;
+    bool showGrid;
+    int gridGap;
+    Shape currentShape;
     
 };
 

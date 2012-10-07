@@ -1,13 +1,13 @@
 #include "paintarea.h"
 
+
 PaintArea::PaintArea(QWidget *parent) :
     QWidget(parent)
 {
     QImage newImage(800, 600, QImage::Format_ARGB32);
     image = newImage;
-    Canvas.SetCanvas(image);
-    setFixedSize(800, 600);
     ClearImage();
+    setFixedSize(800, 600);
     setMouseTracking(true);
 }
 
@@ -24,7 +24,33 @@ bool PaintArea::LoadImage(const QString &fileName)
 void PaintArea::ClearImage()
 {
     image.fill(qRgb(0, 0, 0));
+    Canvas.SetCanvas(image);
     repaint();
+}
+
+void PaintArea::SetGridGap(int gap)
+{
+    gridGap = gap;
+    ClearImage();
+    if (showGrid)
+        Canvas.DrawGrid(gridGap);
+    update();
+}
+
+void PaintArea::SetGridVisibility(bool visible)
+{
+    showGrid = visible;
+    ClearImage();
+}
+
+void PaintArea::SetLineColor(QColor color)
+{
+    lineColor = color;
+}
+
+void PaintArea::SetCurrentShape(Shape shape)
+{
+    currentShape = shape;
 }
 
 void PaintArea::mouseMoveEvent(QMouseEvent *event)
@@ -32,7 +58,7 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
     event->ignore();
     if (startPoint == QPoint(0,0))
         return;
-    Canvas.DrawLine(startPoint, event->pos(), Qt::red);
+    Canvas.DrawLine(startPoint, event->pos(), lineColor);
     image = Canvas.GetCanvas();
     update();
 }
@@ -41,7 +67,7 @@ void PaintArea::paintEvent(QPaintEvent *event)
 {
     QPainter painter;
     painter.begin(this);
-    painter.drawImage(0, 0, image);
+    painter.drawImage(0, 0, Canvas.GetCanvas());
     painter.end();
 }
 

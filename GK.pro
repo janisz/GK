@@ -16,4 +16,5 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     paintarea.h \
-    Graphics/graphics.h
+    Graphics/graphics.h \
+    Globals.h
