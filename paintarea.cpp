@@ -59,7 +59,11 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
     event->ignore();
     if (startPoint == QPoint(0,0))
         return;
+
     Canvas.DrawLine(startPoint, event->pos(), lineColor);
+    Canvas.Circle(startPoint, (event->pos()-startPoint).manhattanLength(), lineColor);
+
+
     image = Canvas.GetCanvas();
     update();
 }

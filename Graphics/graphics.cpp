@@ -88,3 +88,41 @@ void Graphics::DrawGrid(const int gap)
         }
     }
 }
+
+void Graphics::Circle(const int x0, const int y0, const int radius, QColor color)
+{
+    int error = -radius;
+    int x = radius;
+    int y = 0;
+
+    // The following while loop may be altered to 'while (x > y)' for a
+    // performance benefit, as long as a call to 'plot4points' follows
+    // the body of the loop. This allows for the elimination of the
+    // '(x != y)' test in 'plot8points', providing a further benefit.
+    //
+    // For the sake of clarity, this is not shown here.
+    while (x >= y)
+    {
+      plot8points(x0, y0, x, y, color);
+
+      error += y;
+      ++y;
+      error += y;
+
+      // The following test may be implemented in assembly language in
+      // most machines by testing the carry flag after adding 'y' to
+      // the value of 'error' in the previous step, since 'error'
+      // nominally has a negative value.
+      if (error >= 0)
+      {
+        error -= x;
+        --x;
+        error -= x;
+      }
+    }
+}
+
+void Graphics::Circle(const QPoint centre, const int radius, QColor color)
+{
+    Circle(centre.x(), centre.y(), radius, color);
+}
