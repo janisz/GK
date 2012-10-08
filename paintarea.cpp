@@ -6,6 +6,7 @@ PaintArea::PaintArea(QWidget *parent) :
 {
     QImage newImage(800, 600, QImage::Format_ARGB32);
     image = newImage;
+    lineColor = Qt::red;
     ClearImage();
     setFixedSize(800, 600);
     setMouseTracking(true);

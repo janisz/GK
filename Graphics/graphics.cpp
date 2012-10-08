@@ -74,11 +74,17 @@ void Graphics::DrawGrid(const int gap)
 {
     for (int i=0;i<canvas.width(); i+=gap)
     {
-        DrawLine(i, 0, i, canvas.height()-1, Qt::gray);
+        for (int j=0;j<canvas.height();j++)
+        {
+            SetPixel(i, j, Qt::gray);
+        }
     }
 
     for (int i=0;i<canvas.height();i+=gap)
     {
-        DrawLine(0, i, canvas.width()-1, i, Qt::gray);
+        for (int j=0;j<canvas.width();j++)
+        {
+            SetPixel(j, i, Qt::gray);
+        }
     }
 }

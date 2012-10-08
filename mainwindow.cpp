@@ -30,6 +30,9 @@ MainWindow::MainWindow(QWidget *parent)
     leftPanelLayout->addWidget(showGridCheckBox);
 
     gapSizeSpinBox = new QSpinBox(this);
+    gapSizeSpinBox->setMinimum(1);
+    gapSizeSpinBox->setMaximum(600);
+    gapSizeSpinBox->setValue(100);
     leftPanelLayout->addWidget(gapSizeSpinBox);
 
     colorChooseButton = new QPushButton(this);
