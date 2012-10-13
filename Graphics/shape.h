@@ -6,6 +6,8 @@
 #include <QColor>
 #include <QRect>
 
+typedef QList<QPoint> QPointList;
+
 class Shape
 {
 public:

@@ -16,39 +16,49 @@ public:
     Graphics();
     void SetCanvas(QImage canvas);
     QImage GetCanvas();
-    void DrawLine(int x1, int y0, const int x2, const int y2, const QColor color);
-    void DrawLine(const QPoint begin, const QPoint end, const QColor color);
-    void Circle(const QPoint centre, const int radius, QColor color);
-    void Circle(const int x0, const int y0, const int radius, QColor color);
+    Shape DrawLine(int x1, int y0, const int x2, const int y2, const QColor color);
+    Shape DrawLine(const QPoint begin, const QPoint end, const QColor color);
+    Shape Circle(const QPoint centre, const int radius, QColor color);
+    Shape Circle(const int x0, const int y0, const int radius, QColor color);
+    void SetPixel(const QPoint point, const QColor color, QImage& image);
+    void SetPixel(const int x, const int y, const QColor color, QImage& image);
     void SetPixel(const QPoint point, const QColor color);
     void SetPixel(const int x, const int y, const QColor color);
-
     void AddShape(Shape s);
     void SetShapes(QList<Shape> s);
     QList<Shape> GetShapes();
+    void DeleteLastShape();
 
     void Repaint();
 
     //helpers
-    void DrawGrid(const int);
+    QImage DrawGrid(const int);
+    QImage DrawShape(Shape);
     bool isPointInRect(QPoint point, QRect rect);
 private:
     QImage canvas;
+    QImage newShape;
     static QColor defaultColor;
     QList<Shape> shapeList;
 
 protected:
-    void plot8points(int cx, int cy, int x, int y, QColor color)
+    QPointList plot8points(int cx, int cy, int x, int y)
     {
-      plot4points(cx, cy, x, y, color);
-      if (x != y) plot4points(cx, cy, y, x, color);
+      QPointList p = plot4points(cx, cy, x, y);
+      if (x != y) p.append(plot4points(cx, cy, y, x));
+      return p;
     }
-    void plot4points(int cx, int cy, int x, int y, QColor color)
+
+    QPointList plot4points(int cx, int cy, int x, int y)
     {
-      SetPixel(cx + x, cy + y, color);
-      if (x != 0) SetPixel(cx - x, cy + y, color);
-      if (y != 0) SetPixel(cx + x, cy - y, color);
-      if (x != 0 && y != 0) SetPixel(cx - x, cy - y, color);
+      QPointList points;
+      points.append(QPoint(cx + x, cy + y));
+
+      if (x != 0) points.append(QPoint(cx - x, cy + y));
+      if (y != 0) points.append(QPoint(cx + x, cy - y));
+      if (x != 0 && y != 0) points.append(QPoint(cx - x, cy - y));
+
+      return points;
     }
 };
 

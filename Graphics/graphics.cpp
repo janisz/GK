@@ -2,6 +2,7 @@
 
 Graphics::Graphics()
 {
+    newShape = QImage(800, 600, QImage::Format_ARGB32);
 }
 
 void Graphics::SetCanvas(QImage canvas)
@@ -11,7 +12,7 @@ void Graphics::SetCanvas(QImage canvas)
 
 QImage Graphics::GetCanvas()
 {
-    canvas.save("/tmp/test.png", "PNG");
+    Repaint();
     return (this->canvas);
 }
 
@@ -34,9 +35,23 @@ void Graphics::SetPixel(const int x, const int y, const QColor color)
     SetPixel(QPoint(x, y), color);
 }
 
-
-void Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color)
+void Graphics::SetPixel(const QPoint point, const QColor color, QImage& image)
 {
+    if (isPointInRect(point, image.rect()))
+        image.setPixel(point, qRgb(color.red(), color.green(), color.blue()));
+
+}
+
+void Graphics::SetPixel(const int x, const int y, const QColor color, QImage& image)
+{
+    SetPixel(QPoint(x, y), color, image);
+}
+
+
+Shape Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color)
+{
+    QPointList points;
+
     int dx = abs(x1-x0);
     int dy = abs(y1-y0);
     int sx = (x0 < x1) ? 1 : -1;
@@ -45,7 +60,7 @@ void Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor
 
     while (true)
     {
-        SetPixel(x0,y0, color);
+        points.append(QPoint(x0,y0));
 
         if ((x0 == x1) && (y0 == y1))
                 break;
@@ -63,20 +78,25 @@ void Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor
             y0 = y0 + sy;
         }
     }
+
+    return Shape(points, color);
 }
 
-void Graphics::DrawLine( const QPoint begin, const QPoint end, const QColor color)
+Shape Graphics::DrawLine( const QPoint begin, const QPoint end, const QColor color)
 {
     return DrawLine(begin.x(), begin.y(), end.x(), end.y(), color);
 }
 
-void Graphics::DrawGrid(const int gap)
+QImage Graphics::DrawGrid(const int gap)
 {
+    QImage grid(800, 600, QImage::Format_ARGB32);
+    grid.fill(Qt::black);
+
     for (int i=0;i<canvas.width(); i+=gap)
     {
         for (int j=0;j<canvas.height();j++)
         {
-            SetPixel(i, j, Qt::gray);
+            grid.setPixel(i, j, Qt::gray);
         }
     }
 
@@ -84,13 +104,17 @@ void Graphics::DrawGrid(const int gap)
     {
         for (int j=0;j<canvas.width();j++)
         {
-            SetPixel(j, i, Qt::gray);
+            grid.setPixel(j, i, Qt::gray);
         }
     }
+
+    return grid;
 }
 
-void Graphics::Circle(const int x0, const int y0, const int radius, QColor color)
+Shape Graphics::Circle(const int x0, const int y0, const int radius, QColor color)
 {
+    QPointList points;
+
     int error = -radius;
     int x = radius;
     int y = 0;
@@ -103,7 +127,7 @@ void Graphics::Circle(const int x0, const int y0, const int radius, QColor color
     // For the sake of clarity, this is not shown here.
     while (x >= y)
     {
-      plot8points(x0, y0, x, y, color);
+      points.append(plot8points(x0, y0, x, y));
 
       error += y;
       ++y;
@@ -120,16 +144,24 @@ void Graphics::Circle(const int x0, const int y0, const int radius, QColor color
         error -= x;
       }
     }
+
+    return Shape(points, color);
 }
 
-void Graphics::Circle(const QPoint centre, const int radius, QColor color)
+Shape Graphics::Circle(const QPoint centre, const int radius, QColor color)
 {
-    Circle(centre.x(), centre.y(), radius, color);
+    return Circle(centre.x(), centre.y(), radius, color);
 }
 
 void Graphics::AddShape(Shape s)
 {
     shapeList.append(s);
+}
+
+void Graphics::DeleteLastShape()
+{
+    if (!shapeList.isEmpty())
+        shapeList.pop_back();
 }
 
 void Graphics::SetShapes(QList<Shape> s)
@@ -139,6 +171,7 @@ void Graphics::SetShapes(QList<Shape> s)
 
 void Graphics::Repaint()
 {
+    canvas.fill(Qt::transparent);
     foreach (Shape s, shapeList)
     {
         QColor c = s.GetColor();
@@ -147,4 +180,16 @@ void Graphics::Repaint()
             SetPixel(p, c);
         }
     }
+}
+
+QImage Graphics::DrawShape(Shape shape)
+{
+    newShape.fill(Qt::transparent);
+    foreach (QPoint p, shape.GetPoints())
+    {
+        SetPixel(p, shape.GetColor(), newShape);
+    }
+
+    return newShape;
+
 }

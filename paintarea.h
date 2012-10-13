@@ -31,8 +31,10 @@ protected:
 private:
     Graphics Canvas;
     QImage image;
+    QImage bacground;
     QColor lineColor;
     QPoint startPoint;
+    Shape currentFigure;
     bool showGrid;
     int gridGap;
     ShapeType currentShape;

@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
+    connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
     connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeColor()));
     connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
 

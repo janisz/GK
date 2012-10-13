@@ -11,7 +11,7 @@ Shape::Shape(QColor color)
     this->color = color;
 }
 
-Shape::Shape(QList<QPoint> points, QColor color)
+Shape::Shape(QPointList points, QColor color)
 {
     Shape();
     SetColor(color);
@@ -23,13 +23,13 @@ void Shape::SetColor(QColor color)
     this->color = color;
 }
 
-void Shape::SetPoints(QList<QPoint> points)
+void Shape::SetPoints(QPointList points)
 {
     this->pointList = points;
     setRect();
 }
 
-QList<QPoint> Shape::GetPoints()
+QPointList Shape::GetPoints()
 {
     return pointList;
 }
