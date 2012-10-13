@@ -49,7 +49,7 @@ void PaintArea::SetLineColor(QColor color)
     lineColor = color;
 }
 
-void PaintArea::SetCurrentShape(Shape shape)
+void PaintArea::SetCurrentShape(ShapeType shape)
 {
     currentShape = shape;
 }
@@ -60,8 +60,18 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
     if (startPoint == QPoint(0,0))
         return;
 
-    Canvas.DrawLine(startPoint, event->pos(), lineColor);
-    Canvas.Circle(startPoint, (event->pos()-startPoint).manhattanLength(), lineColor);
+    switch (currentShape)
+    {
+        case Line:
+            Canvas.DrawLine(startPoint, event->pos(), lineColor);
+        break;
+        case Circle:
+        Canvas.Circle(startPoint, (event->pos()-startPoint).manhattanLength(), lineColor);
+        break;
+    }
+
+
+
 
 
     image = Canvas.GetCanvas();

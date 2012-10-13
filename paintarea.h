@@ -17,7 +17,7 @@ public:
     void SetLineColor(QColor);
     void SetGridVisibility(bool);
     void SetGridGap(int);
-    void SetCurrentShape(Shape);
+    void SetCurrentShape(ShapeType);
 
 public slots:
     void ClearImage();
@@ -35,7 +35,7 @@ private:
     QPoint startPoint;
     bool showGrid;
     int gridGap;
-    Shape currentShape;
+    ShapeType currentShape;
     
 };
 

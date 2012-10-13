@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeColor()));
+    connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
 
     setMouseTracking(true);
 }
@@ -58,7 +59,7 @@ void MainWindow::ChangeColor()
 
 void MainWindow::ChangeShape()
 {
-    paintArea->SetCurrentShape((Shape)shapeChooserComboBox->currentIndex());
+    paintArea->SetCurrentShape((ShapeType)shapeChooserComboBox->currentIndex());
 }
 
 void MainWindow::ShowGrid()
