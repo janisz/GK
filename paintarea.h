@@ -18,6 +18,7 @@ public:
     void SetGridVisibility(bool);
     void SetGridGap(int);
     void SetCurrentShape(ShapeType);
+    void RunTest();
 
 public slots:
     void ClearImage();

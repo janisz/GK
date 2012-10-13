@@ -16,6 +16,7 @@ public:
     Graphics();
     void SetCanvas(QImage canvas);
     QImage GetCanvas();
+    void  DrawLine(int x0, int y0, const int x1, const int y1, const QColor color, QImage& image);
     Shape DrawLine(int x1, int y0, const int x2, const int y2, const QColor color);
     Shape DrawLine(const QPoint begin, const QPoint end, const QColor color);
     Shape Circle(const QPoint centre, const int radius, QColor color);
@@ -34,6 +35,7 @@ public:
     //helpers
     QImage DrawGrid(const int);
     QImage DrawShape(Shape);
+    void DrawShape(Shape, QImage&);
     bool isPointInRect(QPoint point, QRect rect);
 private:
     QImage canvas;

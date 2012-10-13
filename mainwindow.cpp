@@ -43,14 +43,23 @@ MainWindow::MainWindow(QWidget *parent)
     shapeChooserComboBox->addItems(shapeList);
     leftPanelLayout->addWidget(shapeChooserComboBox);
 
+    testButton = new QPushButton("Test",  this);
+    leftPanelLayout->addWidget(testButton);
+
 
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
     connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeColor()));
+    connect (testButton, SIGNAL(clicked()), this, SLOT(RunTest()));
     connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
 
     setMouseTracking(true);
+}
+
+void MainWindow::RunTest()
+{
+    paintArea->RunTest();
 }
 
 void MainWindow::ChangeColor()

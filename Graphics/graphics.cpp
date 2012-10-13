@@ -87,6 +87,37 @@ Shape Graphics::DrawLine( const QPoint begin, const QPoint end, const QColor col
     return DrawLine(begin.x(), begin.y(), end.x(), end.y(), color);
 }
 
+void Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color, QImage& image)
+{
+    int dx = abs(x1-x0);
+    int dy = abs(y1-y0);
+    int sx = (x0 < x1) ? 1 : -1;
+    int sy = (y0 < y1) ? 1 : -1;
+    int err = dx-dy;
+
+    while (true)
+    {
+        SetPixel(x0, y0, color, image);
+
+        if ((x0 == x1) && (y0 == y1))
+                break;
+
+        int e2 = 2*err;
+
+        if (e2 > -dy)
+        {
+            err = err - dy;
+            x0 = x0 + sx;
+        }
+        if (e2 <  dx)
+        {
+            err = err + dx;
+            y0 = y0 + sy;
+        }
+    }
+}
+
+
 QImage Graphics::DrawGrid(const int gap)
 {
     QImage grid(800, 600, QImage::Format_ARGB32);
@@ -191,5 +222,14 @@ QImage Graphics::DrawShape(Shape shape)
     }
 
     return newShape;
+
+}
+
+void Graphics::DrawShape(Shape shape, QImage& image)
+{
+    foreach (QPoint p, shape.GetPoints())
+    {
+        SetPixel(p, shape.GetColor(), image);
+    }
 
 }

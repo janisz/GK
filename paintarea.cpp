@@ -61,14 +61,15 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
         return;
 
     Shape s;
-
+    QPoint e = event->pos()-startPoint;
+    int r = std::max(e.x(), e.y())/2;
     switch (currentShape)
     {
         case Line:
             s = Canvas.DrawLine(startPoint, event->pos(), lineColor);
         break;
         case Circle:
-            s = Canvas.Circle(startPoint, (event->pos()-startPoint).manhattanLength(), lineColor);
+        s = Canvas.Circle(QPoint(startPoint.x()+r, startPoint.y()+r), std::abs(r), lineColor);
         break;
     }
 
@@ -88,7 +89,15 @@ void PaintArea::paintEvent(QPaintEvent *event)
 
 void PaintArea::mousePressEvent(QMouseEvent *event)
 {
-    startPoint = event->pos();
+    switch (event->button())
+    {
+        case Qt::LeftButton:
+            startPoint = event->pos();
+        break;
+        case Qt::RightButton:
+        break;
+    }
+
 }
 
 void PaintArea::mouseReleaseEvent(QMouseEvent *event)
@@ -97,4 +106,22 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
         Canvas.AddShape(currentFigure);
     currentFigure = Shape();
     startPoint = QPoint(0,0);
+}
+
+void PaintArea::RunTest()
+{
+    long int N = 500000;
+    QTime myTimer;
+    myTimer.start();
+    Shape s;
+    QImage img = bacground;
+    img.fill(Qt::black);
+    for (long int i=0;i<N;i++)
+    {
+         (Canvas.DrawLine(0, 0, 800, 600, Qt::blue, img));
+    }
+    int nMilliseconds = myTimer.elapsed();
+    qDebug() << nMilliseconds/1000;
+    bacground = img;
+    update();
 }
