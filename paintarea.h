@@ -37,6 +37,7 @@ private:
     QPoint startPoint;
     Shape currentFigure;
     bool showGrid;
+    bool dragShape;
     int gridGap;
     ShapeType currentShape;
     

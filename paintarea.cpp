@@ -11,6 +11,7 @@ PaintArea::PaintArea(QWidget *parent) :
     lineColor = Qt::red;
     ClearImage();
     setFixedSize(800, 600);
+    dragShape = false;
     setMouseTracking(true);
     Canvas.SetCanvas(QImage(800, 600, QImage::Format_ARGB32));
 }
@@ -47,6 +48,8 @@ void PaintArea::SetGridVisibility(bool visible)
 void PaintArea::SetLineColor(QColor color)
 {
     lineColor = color;
+    currentFigure.SetColor(color);
+    update();
 }
 
 void PaintArea::SetCurrentShape(ShapeType shape)
@@ -57,22 +60,36 @@ void PaintArea::SetCurrentShape(ShapeType shape)
 void PaintArea::mouseMoveEvent(QMouseEvent *event)
 {
     event->ignore();
+    static QPoint mousePos;
+    if (dragShape)
+    {
+        QPointList pl;
+        foreach (QPoint p, currentFigure.GetPoints())
+        {
+            p.setX(p.x() - mousePos.x() + event->pos().x());
+            p.setY(p.y() - mousePos.y() + event->pos().y());
+            pl.append(p);
+        }
+        currentFigure.SetPoints(pl);
+        update();
+    }
+    mousePos = event->pos();
+
     if (startPoint == QPoint(0,0))
-        return;
+        return; 
 
     Shape s;
     QPoint e = event->pos()-startPoint;
-    int r = std::max(e.x(), e.y())/2;
+    int r = std::max(e.x(), e.y()) / 2;
     switch (currentShape)
     {
         case Line:
             s = Canvas.DrawLine(startPoint, event->pos(), lineColor);
         break;
         case Circle:
-        s = Canvas.Circle(QPoint(startPoint.x()+r, startPoint.y()+r), std::abs(r), lineColor);
+            s = Canvas.Circle(QPoint(startPoint.x()+r, startPoint.y()+r), std::abs(r), lineColor);
         break;
     }
-
     currentFigure = s;
     update();
 }
@@ -95,6 +112,15 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
             startPoint = event->pos();
         break;
         case Qt::RightButton:
+        {
+
+            if (Canvas.GetShapes().isEmpty())
+                return;
+            currentFigure = Canvas.GetShapeAt(event->pos());
+            currentFigure.SetColor(lineColor);
+            dragShape = true;
+            update();
+        }
         break;
     }
 
@@ -102,9 +128,10 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
 
 void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (!currentFigure.GetPoints().empty())
+    if (!currentFigure.GetPoints().isEmpty())
         Canvas.AddShape(currentFigure);
     currentFigure = Shape();
+    dragShape = false;
     startPoint = QPoint(0,0);
 }
 

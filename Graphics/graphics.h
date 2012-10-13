@@ -32,7 +32,8 @@ public:
 
     void Repaint();
 
-    //helpers
+    Shape GetShapeAt(QPoint point);
+
     QImage DrawGrid(const int);
     QImage DrawShape(Shape);
     void DrawShape(Shape, QImage&);

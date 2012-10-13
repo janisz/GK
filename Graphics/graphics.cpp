@@ -233,3 +233,25 @@ void Graphics::DrawShape(Shape shape, QImage& image)
     }
 
 }
+
+QList<Shape> Graphics::GetShapes()
+{
+    return shapeList;
+}
+
+Shape Graphics::GetShapeAt(QPoint point)
+{
+    Shape s;
+    for (int i=0;i<shapeList.length(); i++)
+    {
+        s = shapeList[i];
+        if (isPointInRect(point, s.GetRect()))
+        {
+            shapeList.removeAt(i);
+            return s;
+        }
+    }
+    s = shapeList.front();
+    shapeList.pop_front();
+    return s;
+}
