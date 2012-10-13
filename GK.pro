@@ -12,9 +12,11 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     paintarea.cpp \
-    Graphics/graphics.cpp
+    Graphics/graphics.cpp \
+    Graphics/shape.cpp
 
 HEADERS  += mainwindow.h \
     paintarea.h \
     Graphics/graphics.h \
-    Globals.h
+    Globals.h \
+    Graphics/shape.h

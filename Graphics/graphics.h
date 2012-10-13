@@ -6,6 +6,7 @@
 #include <QList>
 #include <QDebug>
 #include <QImage>
+#include "shape.h"
 
 typedef QList<QPoint> QPointList;
 
@@ -22,12 +23,19 @@ public:
     void SetPixel(const QPoint point, const QColor color);
     void SetPixel(const int x, const int y, const QColor color);
 
+    void AddShape(Shape s);
+    void SetShapes(QList<Shape> s);
+    QList<Shape> GetShapes();
+
+    void Repaint();
+
     //helpers
     void DrawGrid(const int);
     bool isPointInRect(QPoint point, QRect rect);
 private:
     QImage canvas;
     static QColor defaultColor;
+    QList<Shape> shapeList;
 
 protected:
     void plot8points(int cx, int cy, int x, int y, QColor color)

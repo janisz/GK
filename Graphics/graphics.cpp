@@ -126,3 +126,25 @@ void Graphics::Circle(const QPoint centre, const int radius, QColor color)
 {
     Circle(centre.x(), centre.y(), radius, color);
 }
+
+void Graphics::AddShape(Shape s)
+{
+    shapeList.append(s);
+}
+
+void Graphics::SetShapes(QList<Shape> s)
+{
+    shapeList = s;
+}
+
+void Graphics::Repaint()
+{
+    foreach (Shape s, shapeList)
+    {
+        QColor c = s.GetColor();
+        foreach (QPoint p, s.GetPoints())
+        {
+            SetPixel(p, c);
+        }
+    }
+}

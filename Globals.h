@@ -1,7 +1,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-enum Shape
+enum ShapeType
 {
     Line = 0,
     Circle = 1
