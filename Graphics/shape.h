@@ -13,14 +13,16 @@ class Shape
 public:
     Shape();
     Shape(QColor color);
-    Shape(QList<QPoint> points, QColor color);
-    void SetPoints(QList<QPoint> points);
+    Shape(QList<QPoint> points, QColor color, QList<int> alpha = QList<int>());
+    void SetPoints(const QList<QPoint> points, QList<int> alpha = QList<int>());
     void SetColor(QColor color);
     QList<QPoint> GetPoints();
+    QList<int> GetAlpha();
     QColor GetColor();
     QRect GetRect();
 private:
     QList<QPoint> pointList;
+    QList<int>  pointAplha;
     QRect rect;
     QColor color;
     void setRect();

@@ -21,10 +21,10 @@ public:
     Shape DrawLine(const QPoint begin, const QPoint end, const QColor color);
     Shape Circle(const QPoint centre, const int radius, QColor color);
     Shape Circle(const int x0, const int y0, const int radius, QColor color);
-    void SetPixel(const QPoint point, const QColor color, QImage& image);
-    void SetPixel(const int x, const int y, const QColor color, QImage& image);
-    void SetPixel(const QPoint point, const QColor color);
-    void SetPixel(const int x, const int y, const QColor color);
+    void SetPixel(const QPoint point, const QColor color, QImage& image, const int alpha);
+    void SetPixel(const int x, const int y, const QColor color, QImage& image, const int alpha);
+    void SetPixel(const QPoint point, const QColor color, const int alpha);
+    void SetPixel(const int x, const int y, const QColor color, const int alpha);
     void AddShape(Shape s);
     void SetShapes(QList<Shape> s);
     QList<Shape> GetShapes();

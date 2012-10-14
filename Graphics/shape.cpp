@@ -11,11 +11,11 @@ Shape::Shape(QColor color)
     this->color = color;
 }
 
-Shape::Shape(QPointList points, QColor color)
+Shape::Shape(QPointList points, QColor color, QList<int> alpha)
 {
     Shape();
     SetColor(color);
-    SetPoints(points);
+    SetPoints(points, alpha);
 }
 
 void Shape::SetColor(QColor color)
@@ -23,15 +23,26 @@ void Shape::SetColor(QColor color)
     this->color = color;
 }
 
-void Shape::SetPoints(QPointList points)
+void Shape::SetPoints( const QPointList points, QList<int> alpha)
 {
     this->pointList = points;
+    this->pointAplha = alpha;
+    if (alpha.isEmpty())
+    {
+        pointAplha.reserve(points.size());
+        qFill(pointAplha.begin(), pointAplha.end(), 0);
+    }
     setRect();
 }
 
 QPointList Shape::GetPoints()
 {
     return pointList;
+}
+
+QList<int> Shape::GetAlpha()
+{
+    return pointAplha;
 }
 
 QColor Shape::GetColor()

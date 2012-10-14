@@ -22,29 +22,29 @@ bool Graphics::isPointInRect(QPoint point, QRect rect)
             point.y() > rect.top()  && point.y() < rect.bottom());
 }
 
-void Graphics::SetPixel(const QPoint point, const QColor color)
+void Graphics::SetPixel(const QPoint point, const QColor color, const int alpha = 255)
 {
 //    qDebug() << point << color;
     if (isPointInRect(point, canvas.rect()))
-        canvas.setPixel(point, qRgb(color.red(), color.green(), color.blue()));
+        canvas.setPixel(point, qRgba(color.red(), color.green(), color.blue(), alpha));
 
 }
 
-void Graphics::SetPixel(const int x, const int y, const QColor color)
+void Graphics::SetPixel(const int x, const int y, const QColor color, const int alpha = 255)
 {
-    SetPixel(QPoint(x, y), color);
+    SetPixel(QPoint(x, y), color, alpha);
 }
 
-void Graphics::SetPixel(const QPoint point, const QColor color, QImage& image)
+void Graphics::SetPixel(const QPoint point, const QColor color, QImage& image, const int alpha = 255)
 {
     if (isPointInRect(point, image.rect()))
-        image.setPixel(point, qRgb(color.red(), color.green(), color.blue()));
+        image.setPixel(point, qRgba(color.red(), color.green(), color.blue(), alpha));
 
 }
 
-void Graphics::SetPixel(const int x, const int y, const QColor color, QImage& image)
+void Graphics::SetPixel(const int x, const int y, const QColor color, QImage& image, const int alpha = 255)
 {
-    SetPixel(QPoint(x, y), color, image);
+    SetPixel(QPoint(x, y), color, image, alpha);
 }
 
 

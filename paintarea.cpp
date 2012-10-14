@@ -152,3 +152,6 @@ void PaintArea::RunTest()
     bacground = img;
     update();
 }
+
+
+
