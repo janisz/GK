@@ -57,6 +57,10 @@ void PaintArea::SetCurrentShape(ShapeType shape)
     currentShape = shape;
 }
 
+template <typename T> int sgn(T val) {
+    return (T(0) <= val) - (val < T(0));
+}
+
 void PaintArea::mouseMoveEvent(QMouseEvent *event)
 {
     event->ignore();
@@ -80,19 +84,21 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
 
     Shape s;
     QPoint e = event->pos()-startPoint;
-    int r = std::max(e.x(), e.y()) / 2;
+    int r = std::sqrt(e.x()*e.x()+e.y()*e.y()) * std::sqrt(2) / 4;
     switch (currentShape)
     {
         case Line:
             s = Canvas.DrawLine(startPoint, event->pos(), lineColor);
         break;
         case Circle:
-            s = Canvas.Circle(QPoint(startPoint.x()+r, startPoint.y()+r), std::abs(r), lineColor);
+        s = Canvas.Circle(QPoint(startPoint.x()+r*sgn(e.x()), startPoint.y()+r*sgn(e.y())), std::abs(r), lineColor);
         break;
     }
     currentFigure = s;
     update();
 }
+
+
 
 void PaintArea::paintEvent(QPaintEvent *event)
 {
