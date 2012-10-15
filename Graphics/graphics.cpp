@@ -87,34 +87,14 @@ Shape Graphics::DrawLine( const QPoint begin, const QPoint end, const QColor col
     return DrawLine(begin.x(), begin.y(), end.x(), end.y(), color);
 }
 
-void Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color, QImage& image)
+Shape Graphics::DrawAALine(const QPoint begin, const QPoint end, const QColor color)
 {
-    int dx = abs(x1-x0);
-    int dy = abs(y1-y0);
-    int sx = (x0 < x1) ? 1 : -1;
-    int sy = (y0 < y1) ? 1 : -1;
-    int err = dx-dy;
+    return DrawAALine(begin.x(), begin.y(), end.x(), end.y(), color);
+}
 
-    while (true)
-    {
-        SetPixel(x0, y0, color, image);
+Shape Graphics::DrawAALine(int x1, int y0, const int x2, const int y2, const QColor color)
+{
 
-        if ((x0 == x1) && (y0 == y1))
-                break;
-
-        int e2 = 2*err;
-
-        if (e2 > -dy)
-        {
-            err = err - dy;
-            x0 = x0 + sx;
-        }
-        if (e2 <  dx)
-        {
-            err = err + dx;
-            y0 = y0 + sy;
-        }
-    }
 }
 
 
@@ -184,6 +164,79 @@ Shape Graphics::Circle(const QPoint centre, const int radius, QColor color)
     return Circle(centre.x(), centre.y(), radius, color);
 }
 
+
+Shape Graphics::AACircle(const QPoint centre, const int radius, QColor color)
+{
+    return AACircle(centre.x(), centre.y(), radius, color);
+}
+
+//Distance to ceil:
+inline double DC(int r, int y){
+  double x = sqrt(r*r-y*y);
+  return ceil(x) - x;
+}
+
+inline void SetPoint(int x, int y, int alpha, QPointList& p, QList<int>& a)
+{
+    p.append(QPoint(x, y));
+    a.append(alpha);
+}
+
+Shape Graphics::AACircle(const int x0, const int y0, const int radius, QColor color)
+{
+    int y=-1;
+    int x=radius;
+    float d=0;
+    int A =255;
+    QPointList points;
+    QList<int> alpha;
+
+
+    while( x>y ){
+         y++;
+
+         if( DC(radius,y) < d ) x--;
+
+         int A1 = A * DC(radius,y);
+         int A2 = A * (1-DC(radius,y));
+
+         SetPoint(x + x0, y + y0, A, points, alpha);
+         SetPoint(x -1 + x0, y + y0, A1, points, alpha);
+         SetPoint(x +1 + x0, y + y0, A2, points, alpha);
+
+         SetPoint(y + x0, x + y0, A, points, alpha);
+         SetPoint(y + x0, x -1 + y0, A1, points, alpha);
+         SetPoint(y + x0, x +1 + y0, A2, points, alpha);
+
+         SetPoint(-x + x0, y + y0, A, points, alpha);
+         SetPoint(-x +1 + x0, y + y0, A1, points, alpha);
+         SetPoint(-x -1 + x0, y + y0, A2, points, alpha);
+
+         SetPoint(-y + x0, x + y0, A, points, alpha);
+         SetPoint(-y + x0, x -1 + y0, A1, points, alpha);
+         SetPoint(-y + x0, x +1 + y0, A2, points, alpha);
+
+         SetPoint(x + x0, -y + y0, A, points, alpha);
+         SetPoint(x -1 + x0, -y + y0, A1, points, alpha);
+         SetPoint(x +1 + x0, -y + y0, A2, points, alpha);
+
+         SetPoint(y + x0, -x + y0, A, points, alpha);
+         SetPoint(y + x0, -x +1 + y0, A1, points, alpha);
+         SetPoint(y + x0, -x -1 + y0, A2, points, alpha);
+
+         SetPoint(-y + x0, -x + y0, A, points, alpha);
+         SetPoint(-y + x0, -x +1 + y0, A1, points, alpha);
+         SetPoint(-y + x0, -x -1 + y0, A2, points, alpha);
+
+         SetPoint(-x + x0, -y + y0, A, points, alpha);
+         SetPoint(-x +1 + x0, -y + y0, A1, points, alpha);
+         SetPoint(-x -1 + x0, -y + y0, A2, points, alpha);
+
+         d = DC(radius,y);
+    }
+    return Shape(points, color, alpha);
+}
+
 void Graphics::AddShape(Shape s)
 {
     shapeList.append(s);
@@ -206,9 +259,12 @@ void Graphics::Repaint()
     foreach (Shape s, shapeList)
     {
         QColor c = s.GetColor();
-        foreach (QPoint p, s.GetPoints())
+        //foreach (QPoint p, s.GetPoints())
+        for (int i=0;i<s.GetPoints().size();i++)
         {
-            SetPixel(p, c);
+            QPoint p = s.GetPoints()[i];
+            int a = s.GetAlpha()[i];
+            SetPixel(p, c, a);
         }
     }
 }
@@ -216,9 +272,11 @@ void Graphics::Repaint()
 QImage Graphics::DrawShape(Shape shape)
 {
     newShape.fill(Qt::transparent);
-    foreach (QPoint p, shape.GetPoints())
+    for (int i=0;i<shape.GetPoints().size();i++)
     {
-        SetPixel(p, shape.GetColor(), newShape);
+        QPoint p = shape.GetPoints()[i];
+        int a = shape.GetAlpha()[i];
+        SetPixel(p, shape.GetColor(), newShape, a);
     }
 
     return newShape;
@@ -227,9 +285,12 @@ QImage Graphics::DrawShape(Shape shape)
 
 void Graphics::DrawShape(Shape shape, QImage& image)
 {
-    foreach (QPoint p, shape.GetPoints())
+    //foreach (QPoint p, shape.GetPoints())
+    for (int i=0;i<shape.GetPoints().size();i++)
     {
-        SetPixel(p, shape.GetColor(), image);
+        QPoint p = shape.GetPoints()[i];
+        int a = shape.GetAlpha()[i];
+        SetPixel(p, shape.GetColor(), image, a);
     }
 
 }

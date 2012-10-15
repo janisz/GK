@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QImage>
 #include "shape.h"
+#include <cmath>
 
 typedef QList<QPoint> QPointList;
 
@@ -16,11 +17,14 @@ public:
     Graphics();
     void SetCanvas(QImage canvas);
     QImage GetCanvas();
-    void  DrawLine(int x0, int y0, const int x1, const int y1, const QColor color, QImage& image);
     Shape DrawLine(int x1, int y0, const int x2, const int y2, const QColor color);
     Shape DrawLine(const QPoint begin, const QPoint end, const QColor color);
+    Shape DrawAALine(const QPoint begin, const QPoint end, const QColor color);
+    Shape DrawAALine(int x1, int y0, const int x2, const int y2, const QColor color);
     Shape Circle(const QPoint centre, const int radius, QColor color);
     Shape Circle(const int x0, const int y0, const int radius, QColor color);
+    Shape AACircle(const QPoint centre, const int radius, QColor color);
+    Shape AACircle(const int x0, const int y0, const int radius, QColor color);
     void SetPixel(const QPoint point, const QColor color, QImage& image, const int alpha);
     void SetPixel(const int x, const int y, const QColor color, QImage& image, const int alpha);
     void SetPixel(const QPoint point, const QColor color, const int alpha);

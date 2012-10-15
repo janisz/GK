@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Set constans and variables
     shapeList.append("Line");
     shapeList.append("Circle");
+    shapeList.append("AACircle");
 
     //Create UI
     setFixedSize(1000, 620);
