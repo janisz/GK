@@ -131,6 +131,11 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
             update();
         }
         break;
+        case Qt::MiddleButton:
+        {
+            currentFigure = Shape();
+            update();
+        }
     }
 
 }

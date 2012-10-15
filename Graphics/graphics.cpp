@@ -263,7 +263,7 @@ void Graphics::Repaint()
         for (int i=0;i<s.GetPoints().size();i++)
         {
             QPoint p = s.GetPoints()[i];
-            int a = s.GetAlpha()[i];
+            int a = s.GetAlpha().isEmpty() ? 255 : s.GetAlpha()[i];
             SetPixel(p, c, a);
         }
     }
@@ -275,7 +275,7 @@ QImage Graphics::DrawShape(Shape shape)
     for (int i=0;i<shape.GetPoints().size();i++)
     {
         QPoint p = shape.GetPoints()[i];
-        int a = shape.GetAlpha()[i];
+        int a = shape.GetAlpha().isEmpty() ? 255 : shape.GetAlpha()[i];
         SetPixel(p, shape.GetColor(), newShape, a);
     }
 
@@ -289,7 +289,7 @@ void Graphics::DrawShape(Shape shape, QImage& image)
     for (int i=0;i<shape.GetPoints().size();i++)
     {
         QPoint p = shape.GetPoints()[i];
-        int a = shape.GetAlpha()[i];
+        int a = shape.GetAlpha().isEmpty() ? 255 : shape.GetAlpha()[i];
         SetPixel(p, shape.GetColor(), image, a);
     }
 
