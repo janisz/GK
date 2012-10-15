@@ -176,30 +176,70 @@ inline double DC(int r, int y){
   return ceil(x) - x;
 }
 
+inline void SetPoint(int x, int y, int alpha, QPointList& p, QList<int>& a)
+{
+    p.append(QPoint(x, y));
+    a.append(alpha);
+}
+
 Shape Graphics::AACircle(const int x0, const int y0, const int radius, QColor color)
 {
-    int y=0;
+    int y=-1;
     int x=radius;
     float d=0;
     int A =255;
     QPointList points;
     QList<int> alpha;
-    points.append(QPoint(x, y));
-    alpha.append(A);
+
+
     while( x>y ){
          y++;
+
          if( DC(radius,y) < d ) x--;
-         points.append(QPoint(x, y));
-         alpha.append(A*(1-DC(radius,y)));
-         //SetPixel(x, y, color, A*(1-DC(radius,y)) );
-         points.append(QPoint(x, y));
-         alpha.append(A * DC(radius, y));
-         //SetPixel(x, y, color, A*   DC(radius,y) );
+
+         int A1 = A * DC(radius,y);
+         int A2 = A * (1-DC(radius,y));
+
+
+
+         SetPoint(x + x0, y + y0, A, points, alpha);
+         SetPoint(x -1 + x0, y + y0, A1, points, alpha);
+         SetPoint(x +1 + x0, y + y0, A2, points, alpha);
+
+         SetPoint(y + x0, x + y0, A, points, alpha);
+         SetPoint(y + x0, x -1 + y0, A1, points, alpha);
+         SetPoint(y + x0, x +1 + y0, A2, points, alpha);
+
+         SetPoint(-x + x0, y + y0, A, points, alpha);
+         SetPoint(-x +1 + x0, y + y0, A1, points, alpha);
+         SetPoint(-x -1 + x0, y + y0, A2, points, alpha);
+
+         SetPoint(-y + x0, x + y0, A, points, alpha);
+         SetPoint(-y + x0, x -1 + y0, A1, points, alpha);
+         SetPoint(-y + x0, x +1 + y0, A2, points, alpha);
+
+         SetPoint(x + x0, -y + y0, A, points, alpha);
+         SetPoint(x -1 + x0, -y + y0, A1, points, alpha);
+         SetPoint(x +1 + x0, -y + y0, A2, points, alpha);
+
+         SetPoint(y + x0, -x + y0, A, points, alpha);
+         SetPoint(y + x0, -x +1 + y0, A1, points, alpha);
+         SetPoint(y + x0, -x -1 + y0, A2, points, alpha);
+
+         SetPoint(-y + x0, -x + y0, A, points, alpha);
+         SetPoint(-y + x0, -x +1 + y0, A1, points, alpha);
+         SetPoint(-y + x0, -x -1 + y0, A2, points, alpha);
+
+         SetPoint(-x + x0, -y + y0, A, points, alpha);
+         SetPoint(-x +1 + x0, -y + y0, A1, points, alpha);
+         SetPoint(-x -1 + x0, -y + y0, A2, points, alpha);
+
+
          d = DC(radius,y);
+
     }
     return Shape(points, color, alpha);
 }
-
 
 void Graphics::AddShape(Shape s)
 {
@@ -223,9 +263,12 @@ void Graphics::Repaint()
     foreach (Shape s, shapeList)
     {
         QColor c = s.GetColor();
-        foreach (QPoint p, s.GetPoints())
+        //foreach (QPoint p, s.GetPoints())
+        for (int i=0;i<s.GetPoints().size();i++)
         {
-            SetPixel(p, c);
+            QPoint p = s.GetPoints()[i];
+            int a = s.GetAlpha()[i];
+            SetPixel(p, c, a);
         }
     }
 }
