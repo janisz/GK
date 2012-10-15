@@ -200,8 +200,6 @@ Shape Graphics::AACircle(const int x0, const int y0, const int radius, QColor co
          int A1 = A * DC(radius,y);
          int A2 = A * (1-DC(radius,y));
 
-
-
          SetPoint(x + x0, y + y0, A, points, alpha);
          SetPoint(x -1 + x0, y + y0, A1, points, alpha);
          SetPoint(x +1 + x0, y + y0, A2, points, alpha);
@@ -234,9 +232,7 @@ Shape Graphics::AACircle(const int x0, const int y0, const int radius, QColor co
          SetPoint(-x +1 + x0, -y + y0, A1, points, alpha);
          SetPoint(-x -1 + x0, -y + y0, A2, points, alpha);
 
-
          d = DC(radius,y);
-
     }
     return Shape(points, color, alpha);
 }

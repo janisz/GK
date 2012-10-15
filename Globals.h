@@ -5,8 +5,7 @@ enum ShapeType
 {
     Line = 0,
     Circle = 1,
-    AALine = 2,
-    AACircle = 3
+    AACircle = 2
 };
 
 #endif // GLOBALS_H

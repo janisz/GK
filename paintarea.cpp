@@ -89,8 +89,11 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
         case Circle:
             s = Canvas.Circle(QPoint(startPoint.x()+r, startPoint.y()+r), std::abs(r), lineColor);
         break;
+        case AACircle:
+            s = (Canvas.AACircle(QPoint(startPoint.x()+r, startPoint.y()+r), std::abs(r), lineColor));
+        break;
     }
-    currentFigure = (Canvas.AACircle(QPoint(startPoint.x()+r, startPoint.y()+r), std::abs(r), lineColor));//s;
+    currentFigure = s;
     update();
 }
 
