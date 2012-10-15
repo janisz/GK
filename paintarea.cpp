@@ -74,7 +74,7 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
             p.setY(p.y() - mousePos.y() + event->pos().y());
             pl.append(p);
         }
-        currentFigure.SetPoints(pl);
+        currentFigure.SetPoints(pl, currentFigure.GetAlpha());
         update();
     }
     mousePos = event->pos();
