@@ -25,6 +25,8 @@ public:
     Shape Circle(const int x0, const int y0, const int radius, QColor color);
     Shape AACircle(const QPoint centre, const int radius, QColor color);
     Shape AACircle(const int x0, const int y0, const int radius, QColor color);
+    Shape Ellipse( int x0,  int y0,  int x1,  int y1, const QColor color);
+    Shape Ellipse(const QPoint first, const QPoint second, const QColor color);
     void SetPixel(const QPoint point, const QColor color, QImage& image, const int alpha);
     void SetPixel(const int x, const int y, const QColor color, QImage& image, const int alpha);
     void SetPixel(const QPoint point, const QColor color, const int alpha);
