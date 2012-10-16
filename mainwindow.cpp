@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     shapeList.append("Line");
     shapeList.append("Circle");
     shapeList.append("AACircle");
+    shapeList.append("Ellipse");
 
     //Create UI
     setFixedSize(1000, 620);
