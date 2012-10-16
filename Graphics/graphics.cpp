@@ -195,7 +195,7 @@ Shape Graphics::AACircle(const int x0, const int y0, const int radius, QColor co
     while( x>y ){
          y++;
 
-         if( DC(radius,y) < d ) x--;
+         if( DC(radius,y) <= d ) x--;
 
          int A1 = A * DC(radius,y);
          int A2 = A * (1-DC(radius,y));
