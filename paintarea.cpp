@@ -107,7 +107,7 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
             s = Canvas.Ellipse(startPoint, event->pos(), lineColor);
         break;
         case StrongLine:
-            s = Canvas.DrawLine(startPoint, event->pos(), lineColor, 3);
+            s = Canvas.DrawLine(startPoint, event->pos(), lineColor, 5);
         break;
         case StrongCircle:
             s = Canvas.Circle(QPoint(startPoint.x()+r*sgn(e.x()), startPoint.y()+r*sgn(e.y())), std::abs(r), lineColor, 3);
