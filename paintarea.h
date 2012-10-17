@@ -40,7 +40,10 @@ private:
     bool showGrid;
     bool dragShape;
     int gridGap;
+    bool drawPolygon;
+    QList<QPoint> polygonPoints;
     ShapeType currentShape;
+    Shape DrawPolygon();
     
 };
 

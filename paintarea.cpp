@@ -63,6 +63,13 @@ template <typename T> int sgn(T val) {
 
 void PaintArea::mouseMoveEvent(QMouseEvent *event)
 {
+    if (currentShape == Polygon)
+    {
+        drawPolygon = true;
+        return;
+    }
+    else drawPolygon = false;
+
     event->ignore();
     static QPoint mousePos;
     if (dragShape)
@@ -99,6 +106,12 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
         case Ellipse:
             s = Canvas.Ellipse(startPoint, event->pos(), lineColor);
         break;
+//        case Polygon:
+//        {
+//            drawPolygon = true;
+//            s = DrawPolygon();
+//        }
+//        break;
     }
     currentFigure = s;
     update();
@@ -116,21 +129,51 @@ void PaintArea::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
+Shape PaintArea::DrawPolygon()
+{
+    QPointList points;
+    QPoint prev = polygonPoints[0];
+
+    for (int i=1;i<polygonPoints.size();i++)
+    {
+        points.append(Canvas.DrawLine(prev, polygonPoints[i], lineColor).GetPoints());
+        prev = polygonPoints[i];
+    }
+    points.append(Canvas.DrawLine(polygonPoints.first(), polygonPoints.last(), lineColor).GetPoints());
+    return Shape(points, lineColor);
+}
+
 void PaintArea::mousePressEvent(QMouseEvent *event)
 {
     switch (event->button())
     {
         case Qt::LeftButton:
-            startPoint = event->pos();
+        {
+            if (drawPolygon)
+            {
+                startPoint = QPoint(1,1);
+                polygonPoints.append(event->pos());
+            }
+            else
+                startPoint = event->pos();
+        }
         break;
         case Qt::RightButton:
         {
-
+            if (drawPolygon)
+            {
+                currentFigure = DrawPolygon();
+                drawPolygon = false;
+                polygonPoints.clear();
+                update();
+                return;
+            }
             if (Canvas.GetShapes().isEmpty())
                 return;
             currentFigure = Canvas.GetShapeAt(event->pos());
             currentFigure.SetColor(lineColor);
             dragShape = true;
+            drawPolygon = false;
             update();
         }
         break;
