@@ -19,10 +19,14 @@ public:
     QImage GetCanvas();
     Shape DrawLine(int x1, int y0, const int x2, const int y2, const QColor color);
     Shape DrawLine(const QPoint begin, const QPoint end, const QColor color);
+    Shape DrawLine(int x1, int y0, const int x2, const int y2, const QColor color, int size);
+    Shape DrawLine(const QPoint begin, const QPoint end, const QColor color, int size);
     Shape DrawAALine(const QPoint begin, const QPoint end, const QColor color);
     Shape DrawAALine(int x1, int y0, const int x2, const int y2, const QColor color);
     Shape Circle(const QPoint centre, const int radius, QColor color);
     Shape Circle(const int x0, const int y0, const int radius, QColor color);
+    Shape Circle(const QPoint centre, const int radius, QColor color, int size);
+    Shape Circle(const int x0, const int y0, const int radius, QColor color, int size);
     Shape AACircle(const QPoint centre, const int radius, QColor color);
     Shape AACircle(const int x0, const int y0, const int radius, QColor color);
     Shape Ellipse( int x0,  int y0,  int x1,  int y1, const QColor color);

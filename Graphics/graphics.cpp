@@ -47,6 +47,54 @@ void Graphics::SetPixel(const int x, const int y, const QColor color, QImage& im
     SetPixel(QPoint(x, y), color, image, alpha);
 }
 
+Shape Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color, int size)
+{
+    QPointList points;
+
+    int dx = abs(x1-x0);
+    int dy = abs(y1-y0);
+    int sx = (x0 < x1) ? 1 : -1;
+    int sy = (y0 < y1) ? 1 : -1;
+    int err = dx-dy;
+
+    while (true)
+    {
+        //points.append(QPoint(x0,y0));
+        qDebug() << size;
+
+        for (int i=0;i<size;i++)
+        {
+            for (int j=0;j<size;j++)
+            {
+                points.append(QPoint(x0+i, y0+j));
+                qDebug() << QPoint(x0+i, y0+j);
+            }
+        }
+
+        if ((x0 == x1) && (y0 == y1))
+                break;
+
+        int e2 = 2*err;
+
+        if (e2 > -dy)
+        {
+            err = err - dy;
+            x0 = x0 + sx;
+        }
+        if (e2 <  dx)
+        {
+            err = err + dx;
+            y0 = y0 + sy;
+        }
+    }
+
+    return Shape(points, color);
+}
+
+Shape Graphics::DrawLine( const QPoint begin, const QPoint end, const QColor color, int size)
+{
+    return DrawLine(begin.x(), begin.y(), end.x(), end.y(), color, size);
+}
 
 Shape Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color)
 {
@@ -121,6 +169,55 @@ QImage Graphics::DrawGrid(const int gap)
 
     return grid;
 }
+
+Shape Graphics::Circle(const int x0, const int y0, const int radius, QColor color, int size)
+{
+    QPointList points;
+
+    int error = -radius;
+    int x = radius;
+    int y = 0;
+
+    // The following while loop may be altered to 'while (x > y)' for a
+    // performance benefit, as long as a call to 'plot4points' follows
+    // the body of the loop. This allows for the elimination of the
+    // '(x != y)' test in 'plot8points', providing a further benefit.
+    //
+    // For the sake of clarity, this is not shown here.
+    while (x >= y)
+    {
+        for (int i=0;i<size;i++)
+        {
+            for (int j=0;j<size;j++)
+            {
+                points.append(plot8points(x0+i, y0+j, x, y));
+            }
+        }
+
+      error += y;
+      ++y;
+      error += y;
+
+      // The following test may be implemented in assembly language in
+      // most machines by testing the carry flag after adding 'y' to
+      // the value of 'error' in the previous step, since 'error'
+      // nominally has a negative value.
+      if (error >= 0)
+      {
+        error -= x;
+        --x;
+        error -= x;
+      }
+    }
+
+    return Shape(points, color);
+}
+
+Shape Graphics::Circle(const QPoint centre, const int radius, QColor color, int size)
+{
+    return Circle(centre.x(), centre.y(), radius, color, size);
+}
+
 
 Shape Graphics::Circle(const int x0, const int y0, const int radius, QColor color)
 {
