@@ -5,28 +5,20 @@
 #include <QPoint>
 #include <QColor>
 #include <QRect>
+#include <QImage>
 
 typedef QList<QPoint> QPointList;
 
 class Shape
 {
 public:
-    Shape();
-    Shape(QColor color);
-    Shape(QList<QPoint> points, QColor color, QList<int> alpha = QList<int>());
-    void SetPoints(const QList<QPoint> points, QList<int> alpha = QList<int>());
     void SetColor(QColor color);
-    QList<QPoint> GetPoints();
-    QList<int> GetAlpha();
     QColor GetColor();
-    QRect GetRect();
-private:
-    QList<QPoint> pointList;
-    QList<int>  pointAplha;
-    QRect rect;
+    virtual QRect GetRect() = 0;
+    virtual void Draw(QImage &img) = 0;
+    virtual void Move(int x, int y) = 0;
+protected:
     QColor color;
-    void setRect();
-
 };
 
 #endif // SHAPE_H

@@ -74,7 +74,7 @@ void MainWindow::ChangeColor()
 
 void MainWindow::ChangeShape()
 {
-    paintArea->SetCurrentShape((ShapeType)shapeChooserComboBox->currentIndex());
+    paintArea->SetCurrentShape((Globals::ShapeType)shapeChooserComboBox->currentIndex());
 }
 
 void MainWindow::ShowGrid()

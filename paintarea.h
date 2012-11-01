@@ -13,12 +13,11 @@ public:
     explicit PaintArea(QWidget *parent = 0);
     
 public:
-//    bool SaveImage(const QString &fileName, const char *fileFormat);
     bool LoadImage(const QString &fileName);
     void SetLineColor(QColor);
     void SetGridVisibility(bool);
     void SetGridGap(int);
-    void SetCurrentShape(ShapeType);
+    void SetCurrentShape(Globals::ShapeType);
     void RunTest();
 
 public slots:
@@ -36,14 +35,14 @@ private:
     QImage bacground;
     QColor lineColor;
     QPoint startPoint;
-    Shape currentFigure;
+    Shape* currentFigure;
     bool showGrid;
     bool dragShape;
     int gridGap;
     bool drawPolygon;
     QList<QPoint> polygonPoints;
-    ShapeType currentShape;
-    Shape DrawPolygon();
+    Globals::ShapeType currentShape;
+    Shape* DrawPolygon();
     
 };
 

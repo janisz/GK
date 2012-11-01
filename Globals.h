@@ -1,6 +1,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+namespace Globals {
+
 enum ShapeType
 {
     Line = 0,
@@ -11,5 +13,7 @@ enum ShapeType
     StrongLine = 5,
     StrongCircle = 6
 };
+
+}
 
 #endif // GLOBALS_H

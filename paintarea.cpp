@@ -6,7 +6,7 @@ PaintArea::PaintArea(QWidget *parent) :
 {
     QImage newImage(800, 600, QImage::Format_ARGB32);
     image = newImage;
-    currentShape = Line;
+    currentShape = Globals::Line;
     bacground = newImage;
     lineColor = Qt::red;
     ClearImage();
@@ -48,11 +48,11 @@ void PaintArea::SetGridVisibility(bool visible)
 void PaintArea::SetLineColor(QColor color)
 {
     lineColor = color;
-    currentFigure.SetColor(color);
+    currentFigure->SetColor(color);
     update();
 }
 
-void PaintArea::SetCurrentShape(ShapeType shape)
+void PaintArea::SetCurrentShape(Globals::ShapeType shape)
 {
     currentShape = shape;
 }
@@ -63,54 +63,39 @@ template <typename T> int sgn(T val) {
 
 void PaintArea::mouseMoveEvent(QMouseEvent *event)
 {
-    if (currentShape == Polygon)
-    {
-        drawPolygon = true;
-        return;
-    }
-    else drawPolygon = false;
+//    if (currentShape == Polygon)
+//    {
+//        drawPolygon = true;
+//        return;
+//    }
+//    else drawPolygon = false;
 
-    event->ignore();
-    static QPoint mousePos;
-    if (dragShape)
-    {
-        QPointList pl;
-        foreach (QPoint p, currentFigure.GetPoints())
-        {
-            p.setX(p.x() - mousePos.x() + event->pos().x());
-            p.setY(p.y() - mousePos.y() + event->pos().y());
-            pl.append(p);
-        }
-        currentFigure.SetPoints(pl, currentFigure.GetAlpha());
-        update();
-    }
-    mousePos = event->pos();
+//    event->ignore();
+//    static QPoint mousePos;
+//    if (dragShape)
+//    {
+//        QPointList pl;
+//        foreach (QPoint p, currentFigure.GetPoints())
+//        {
+//            p.setX(p.x() - mousePos.x() + event->pos().x());
+//            p.setY(p.y() - mousePos.y() + event->pos().y());
+//            pl.append(p);
+//        }
+//        currentFigure.SetPoints(pl, currentFigure.GetAlpha());
+//        update();
+//    }
+//    mousePos = event->pos();
 
     if (startPoint == QPoint(0,0))
-        return; 
+        return;
 
-    Shape s;
+    Shape* s;
     QPoint e = event->pos()-startPoint;
     int r = std::sqrt(e.x()*e.x()+e.y()*e.y()) * std::sqrt(2) / 4;
     switch (currentShape)
     {
-        case Line:
-            s = Canvas.DrawLine(startPoint, event->pos(), lineColor);
-        break;
-        case Circle:
-            s = Canvas.Circle(QPoint(startPoint.x()+r*sgn(e.x()), startPoint.y()+r*sgn(e.y())), std::abs(r), lineColor);
-        break;
-        case AACircle:
-        s = (Canvas.AACircle(QPoint(startPoint.x()+r*sgn(e.x()), startPoint.y()+r*sgn(e.y())), std::abs(r), lineColor));
-        break;
-        case Ellipse:
-            s = Canvas.Ellipse(startPoint, event->pos(), lineColor);
-        break;
-        case StrongLine:
-            s = Canvas.DrawLine(startPoint, event->pos(), lineColor, 5);
-        break;
-        case StrongCircle:
-            s = Canvas.Circle(QPoint(startPoint.x()+r*sgn(e.x()), startPoint.y()+r*sgn(e.y())), std::abs(r), lineColor, 3);
+        case Globals::Line:
+        s = new Line(startPoint, event->pos(), Qt::red);
         break;
     }
     currentFigure = s;
@@ -129,18 +114,18 @@ void PaintArea::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
-Shape PaintArea::DrawPolygon()
+Shape *PaintArea::DrawPolygon()
 {
-    QPointList points;
-    QPoint prev = polygonPoints[0];
+//    QPointList points;
+//    QPoint prev = polygonPoints[0];
 
-    for (int i=1;i<polygonPoints.size();i++)
-    {
-        points.append(Canvas.DrawLine(prev, polygonPoints[i], lineColor).GetPoints());
-        prev = polygonPoints[i];
-    }
-    points.append(Canvas.DrawLine(polygonPoints.first(), polygonPoints.last(), lineColor).GetPoints());
-    return Shape(points, lineColor);
+//    for (int i=1;i<polygonPoints.size();i++)
+//    {
+//        points.append(Canvas.DrawLine(prev, polygonPoints[i], lineColor).GetPoints());
+//        prev = polygonPoints[i];
+//    }
+//    points.append(Canvas.DrawLine(polygonPoints.first(), polygonPoints.last(), lineColor).GetPoints());
+//    return Shape(points, lineColor);
 }
 
 void PaintArea::mousePressEvent(QMouseEvent *event)
@@ -171,7 +156,7 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
             if (Canvas.GetShapes().isEmpty())
                 return;
             currentFigure = Canvas.GetShapeAt(event->pos());
-            currentFigure.SetColor(lineColor);
+            currentFigure->SetColor(lineColor);
             dragShape = true;
             drawPolygon = false;
             update();
@@ -179,7 +164,7 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
         break;
         case Qt::MiddleButton:
         {
-            currentFigure = Shape();
+            currentFigure = NULL;
             update();
         }
     }
@@ -188,26 +173,26 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
 
 void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (!currentFigure.GetPoints().isEmpty())
+    if (currentFigure)
         Canvas.AddShape(currentFigure);
-    currentFigure = Shape();
+    currentFigure = NULL;
     dragShape = false;
     startPoint = QPoint(0,0);
 }
 
 void PaintArea::RunTest()
 {
-    long int N = 500000;
-    QTime myTimer;
-    myTimer.start();
-    Shape s;
-    for (long int i=0;i<N;i++)
-    {
-         Canvas.AddShape(Canvas.DrawLine(0, 0, 800, 600, Qt::blue));
-    }
-    int nMilliseconds = myTimer.elapsed();
-    qDebug() << nMilliseconds/1000;
-    update();
+//    long int N = 500000;
+//    QTime myTimer;
+//    myTimer.start();
+//    Shape s;
+//    for (long int i=0;i<N;i++)
+//    {
+//         Canvas.AddShape(Canvas.DrawLine(0, 0, 800, 600, Qt::blue));
+//    }
+//    int nMilliseconds = myTimer.elapsed();
+//    qDebug() << nMilliseconds/1000;
+//    update();
 }
 
 
