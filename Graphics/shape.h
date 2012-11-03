@@ -6,6 +6,7 @@
 #include <QColor>
 #include <QRect>
 #include <QImage>
+#include "Globals.h"
 
 typedef QList<QPoint> QPointList;
 
@@ -20,8 +21,11 @@ public:
     void Move(int x, int y) { Move(QPoint(x, y)); }
     void SetColor(QColor color) { this->color = color; }
     QColor GetColor() { return color; }
+    void SetType(Globals::ShapeType newType) { type = newType; }
+    Globals::ShapeType GetType() { return type; }
 protected:
     QColor color;
+    Globals::ShapeType type;
 };
 
 #endif // SHAPE_H

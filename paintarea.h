@@ -4,6 +4,7 @@
 #include <QtGui>
 #include "Globals.h"
 #include "Graphics/graphics.h"
+#include "Graphics/polygon.h"
 #include <cmath>
 
 class PaintArea : public QWidget

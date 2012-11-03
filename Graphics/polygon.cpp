@@ -2,11 +2,17 @@
 
 Polygon::Polygon()
 {
+    SetType(Globals::Polygon);
 }
 
 void Polygon::AddVertex(QPoint newVertex)
 {
     vertexs.append(newVertex);
+}
+
+void Polygon::ChangeLastVertex(QPoint vertex)
+{
+    vertexs.back() = vertex;
 }
 
 void Polygon::Move(QPoint pos)

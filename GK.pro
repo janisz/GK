@@ -13,7 +13,6 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     paintarea.cpp \
     Graphics/graphics.cpp \
-    Graphics/shape.cpp \
     Graphics/line.cpp \
     Graphics/polygon.cpp
 
