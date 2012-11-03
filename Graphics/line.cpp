@@ -13,11 +13,10 @@ Line::Line(QPoint begin, QPoint end, QColor color)
     this->color = color;
 }
 
-void Line::Move(int x, int y)
+void Line::Move(QPoint pos)
 {
-    QPoint p = QPoint(x, y);
-    begin += p;
-    end += p;
+    begin += pos;
+    end += pos;
 }
 
 QRect Line::GetRect()

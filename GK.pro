@@ -14,11 +14,13 @@ SOURCES += main.cpp\
     paintarea.cpp \
     Graphics/graphics.cpp \
     Graphics/shape.cpp \
-    Graphics/line.cpp
+    Graphics/line.cpp \
+    Graphics/polygon.cpp
 
 HEADERS  += mainwindow.h \
     paintarea.h \
     Graphics/graphics.h \
     Globals.h \
     Graphics/shape.h \
-    Graphics/line.h
+    Graphics/line.h \
+    Graphics/polygon.h

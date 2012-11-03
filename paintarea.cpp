@@ -13,6 +13,7 @@ PaintArea::PaintArea(QWidget *parent) :
     setFixedSize(800, 600);
     dragShape = false;
     setMouseTracking(true);
+    currentFigure = 0;
     Canvas.SetCanvas(QImage(800, 600, QImage::Format_ARGB32));
 }
 
@@ -48,7 +49,8 @@ void PaintArea::SetGridVisibility(bool visible)
 void PaintArea::SetLineColor(QColor color)
 {
     lineColor = color;
-    currentFigure->SetColor(color);
+    if (currentFigure)
+        currentFigure->SetColor(color);
     update();
 }
 
@@ -95,7 +97,7 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
     switch (currentShape)
     {
         case Globals::Line:
-        s = new Line(startPoint, event->pos(), Qt::red);
+        s = new Line(startPoint, event->pos(), lineColor);
         break;
     }
     currentFigure = s;

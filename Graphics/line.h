@@ -13,7 +13,7 @@ public:
     Line(QPoint begin, QPoint end, QColor color);
     void SetColor(QColor color);
     void Draw(QImage &img);
-    void Move(int x, int y);
+    void Move(QPoint pos);
     QRect GetRect();
 protected:
     QPoint begin;
