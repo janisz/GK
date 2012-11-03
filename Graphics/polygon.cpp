@@ -49,3 +49,49 @@ QRect Polygon::GetRect()
     return QRect(leftTop, rightDown);
 
 }
+
+
+long long int inline CrossProductLength(int ax, int ay, int bx, int by, int cx, int cy)
+{
+    int Ax = ax - bx, Ay = ay - by;
+    int Bx = cx - bx, By = cy - by;
+    return (Ax * By) - (Ay * Bx);
+}
+
+
+bool Polygon::isConvex()
+{
+    // For each set of three adjacent points A, B, C,
+    // find the dot product AB · BC. If the sign of
+    // all the dot products is the same, the angles
+    // are all positive or negative (depending on the
+    // order in which we visit them) so the polygon
+    // is convex.
+    bool got_negative = false;
+    bool got_positive = false;
+    int num_points = vertexs.size();
+    int B, C;
+    for (int A = 0; A < num_points; A++)
+    {
+        B = (A + 1) % num_points;
+        C = (B + 1) % num_points;
+
+        long long int cross_product =
+            CrossProductLength(
+                    vertexs[A].x(), vertexs[A].y(),
+                    vertexs[B].x(), vertexs[B].y(),
+                    vertexs[C].x(), vertexs[C].y());
+        if (cross_product < 0)
+        {
+            got_negative = true;
+        }
+        else if (cross_product > 0)
+        {
+            got_positive = true;
+        }
+        if (got_negative && got_positive) return false;
+    }
+
+    // If we got this far, the polygon is convex.
+    return true;
+}

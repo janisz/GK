@@ -85,10 +85,6 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
         case Globals::Line:
         currentFigure = new Line(startPoint, event->pos(), lineColor);
         break;
-    case Globals::Polygon:
-        {
-
-        }
     }
     update();
 }
@@ -125,6 +121,7 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
         {
             if (drawPolygon)
             {
+                qDebug() << "Convex: " << ((Polygon*)currentFigure)->isConvex();
                 drawPolygon = false;
                 return;
             }

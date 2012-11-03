@@ -13,6 +13,7 @@ public:
     void Move(QPoint pos);
     void Draw(QImage &img);
     QRect GetRect();
+    bool isConvex();
 protected:
     QList<QPoint> vertexs;
 
