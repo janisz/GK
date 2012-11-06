@@ -1,12 +1,5 @@
 #include "line.h"
 
-Line::Line()
-{
-    begin = end = QPoint(0, 0);
-    color = Qt::red;
-    SetType(Globals::Line);
-}
-
 Line::Line(QPoint begin, QPoint end, QColor color)
 {
     this->begin = begin;

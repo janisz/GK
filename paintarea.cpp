@@ -135,6 +135,7 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
         break;
         case Qt::MiddleButton:
         {
+            delete currentFigure;
             currentFigure = NULL;
             update();
         }
