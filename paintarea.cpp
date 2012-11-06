@@ -155,6 +155,11 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
     startPoint = QPoint(0,0);
 }
 
+void PaintArea::AddLine(const int x0, const int x1, const int y0, const int y1)
+{
+    Canvas.AddShape(new Line(QPoint(x0, y0), QPoint(x1, y1), lineColor));
+}
+
 void PaintArea::RunTest()
 {
 

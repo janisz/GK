@@ -51,12 +51,16 @@ MainWindow::MainWindow(QWidget *parent)
     testButton = new QPushButton("Test",  this);
     leftPanelLayout->addWidget(testButton);
 
+    newLineButton = new QPushButton("Line", this);
+    leftPanelLayout->addWidget(newLineButton);
+
 
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
     connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeColor()));
     connect (testButton, SIGNAL(clicked()), this, SLOT(RunTest()));
+    connect (newLineButton, SIGNAL(clicked()), this, SLOT(NewLine()));
     connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
 
     setMouseTracking(true);
@@ -65,6 +69,19 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::RunTest()
 {
     paintArea->RunTest();
+}
+
+void MainWindow::NewLine()
+{
+    int x0, y0, x1, y1;
+    x0 = y0 = x1 = y1 = 0;
+
+    x0 = QInputDialog::getInteger(this, "Insert value", "X0");
+    y0 = QInputDialog::getInteger(this, "Insert value", "Y0");
+    x1 = QInputDialog::getInteger(this, "Insert value", "X1");
+    y1 = QInputDialog::getInteger(this, "Insert value", "Y1");
+
+    paintArea->AddLine(x0, x1, y0, y1);
 }
 
 void MainWindow::ChangeColor()

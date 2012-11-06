@@ -18,6 +18,7 @@ private:
     QSpinBox *gapSizeSpinBox;
     QPushButton *colorChooseButton;
     QPushButton *testButton;
+    QPushButton *newLineButton;
     QComboBox *shapeChooserComboBox;
 
     QStringList shapeList;
@@ -34,6 +35,7 @@ public:
 public slots:
     void ChangeColor();
     void ChangeShape();
+    void NewLine();
     void ShowGrid();
     void RunTest();
 

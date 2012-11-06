@@ -19,6 +19,7 @@ public:
     void SetGridVisibility(bool);
     void SetGridGap(int);
     void SetCurrentShape(Globals::ShapeType);
+    void AddLine(const int x0, const int x1, const int y0, const int y1);
     void RunTest();
 
 public slots:
