@@ -15,6 +15,7 @@ public:
     void Move(QPoint pos);
     QRect GetRect();
 protected:
+    bool ClipToRect(int &x0, int &y0, int &x1, int &y1);
     QPoint begin;
     QPoint end;
 };
