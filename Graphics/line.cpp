@@ -68,15 +68,15 @@ bool Line::ClipToRect(int &x0, int &y0, int &x1, int &y1)
                             x = x0 + (x1 - x0) * (ymax - y0) / (y1 - y0);
                             y = ymax;
                     }
-                    if (outcodeOut & BOTTOM) { // down
+                    else if (outcodeOut & BOTTOM) { // down
                             x = x0 + (x1 - x0) * (ymin - y0) / (y1 - y0);
                             y = ymin;
                     }
-                    if (outcodeOut & RIGHT) {  // right
+                    else if (outcodeOut & RIGHT) {  // right
                             y = y0 + (y1 - y0) * (xmax - x0) / (x1 - x0);
                             x = xmax;
                     }
-                    if (outcodeOut & LEFT) {   // left
+                    else {   // left
                             y = y0 + (y1 - y0) * (xmin - x0) / (x1 - x0);
                             x = xmin;
                     }
