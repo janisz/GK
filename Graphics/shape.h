@@ -6,6 +6,7 @@
 #include <QColor>
 #include <QRect>
 #include <QImage>
+#include <QDebug>
 #include "Globals.h"
 
 typedef QList<QPoint> QPointList;
@@ -23,9 +24,15 @@ public:
     QColor GetColor() { return color; }
     void SetType(Globals::ShapeType newType) { type = newType; }
     Globals::ShapeType GetType() { return type; }
+    friend QDebug operator<< (QDebug d, const Shape *model);
 protected:
     QColor color;
     Globals::ShapeType type;
 };
+
+inline QDebug operator<< (QDebug d, Shape* s) {
+    d << s->GetType() << s->GetColor() << s->GetRect();
+    return d;
+}
 
 #endif // SHAPE_H

@@ -5,6 +5,7 @@ Line::Line(QPoint begin, QPoint end, QColor color)
     this->begin = begin;
     this->end = end;
     this->color = color;
+    this->type = Globals::Line;
 }
 
 void Line::Move(QPoint pos)

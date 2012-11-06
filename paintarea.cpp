@@ -157,17 +157,7 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 
 void PaintArea::RunTest()
 {
-//    long int N = 500000;
-//    QTime myTimer;
-//    myTimer.start();
-//    Shape s;
-//    for (long int i=0;i<N;i++)
-//    {
-//         Canvas.AddShape(Canvas.DrawLine(0, 0, 800, 600, Qt::blue));
-//    }
-//    int nMilliseconds = myTimer.elapsed();
-//    qDebug() << nMilliseconds/1000;
-//    update();
+
 }
 
 

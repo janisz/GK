@@ -24,10 +24,7 @@ bool Graphics::isPointInRect(QPoint point, QRect rect)
 
 void Graphics::SetPixel(const QPoint point, const QColor color, const int alpha = 255)
 {
-//    qDebug() << point << color;
-    if (isPointInRect(point, canvas.rect()))
-        canvas.setPixel(point, qRgba(color.red(), color.green(), color.blue(), alpha));
-
+    canvas.setPixel(point, qRgba(color.red(), color.green(), color.blue(), alpha));
 }
 
 void Graphics::SetPixel(const int x, const int y, const QColor color, const int alpha = 255)
@@ -46,105 +43,6 @@ void Graphics::SetPixel(const int x, const int y, const QColor color, QImage& im
 {
     SetPixel(QPoint(x, y), color, image, alpha);
 }
-
-//Shape Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color, int size)
-//{
-////    QPointList points;
-
-////    int dx = abs(x1-x0);
-////    int dy = abs(y1-y0);
-////    int sx = (x0 < x1) ? 1 : -1;
-////    int sy = (y0 < y1) ? 1 : -1;
-////    int err = dx-dy;
-
-////    while (true)
-////    {
-////        //points.append(QPoint(x0,y0));
-////        qDebug() << size;
-
-////        for (int i=0;i<size;i++)
-////        {
-////            for (int j=0;j<size;j++)
-////            {
-////                points.append(QPoint(x0+i, y0+j));
-////                qDebug() << QPoint(x0+i, y0+j);
-////            }
-////        }
-
-////        if ((x0 == x1) && (y0 == y1))
-////                break;
-
-////        int e2 = 2*err;
-
-////        if (e2 > -dy)
-////        {
-////            err = err - dy;
-////            x0 = x0 + sx;
-////        }
-////        if (e2 <  dx)
-////        {
-////            err = err + dx;
-////            y0 = y0 + sy;
-////        }
-////    }
-
-////    return Shape(points, color);
-//}
-
-//Shape Graphics::DrawLine( const QPoint begin, const QPoint end, const QColor color, int size)
-//{
-//    return DrawLine(begin.x(), begin.y(), end.x(), end.y(), color, size);
-//}
-
-//Shape Graphics::DrawLine(int x0, int y0, const int x1, const int y1, const QColor color)
-//{
-////    QPointList points;
-
-////    int dx = abs(x1-x0);
-////    int dy = abs(y1-y0);
-////    int sx = (x0 < x1) ? 1 : -1;
-////    int sy = (y0 < y1) ? 1 : -1;
-////    int err = dx-dy;
-
-////    while (true)
-////    {
-////        points.append(QPoint(x0,y0));
-
-////        if ((x0 == x1) && (y0 == y1))
-////                break;
-
-////        int e2 = 2*err;
-
-////        if (e2 > -dy)
-////        {
-////            err = err - dy;
-////            x0 = x0 + sx;
-////        }
-////        if (e2 <  dx)
-////        {
-////            err = err + dx;
-////            y0 = y0 + sy;
-////        }
-////    }
-
-////    return Shape(points, color);
-//}
-
-//Shape Graphics::DrawLine( const QPoint begin, const QPoint end, const QColor color)
-//{
-//    return DrawLine(begin.x(), begin.y(), end.x(), end.y(), color);
-//}
-
-//Shape Graphics::DrawAALine(const QPoint begin, const QPoint end, const QColor color)
-//{
-//    return DrawAALine(begin.x(), begin.y(), end.x(), end.y(), color);
-//}
-
-//Shape Graphics::DrawAALine(int x1, int y0, const int x2, const int y2, const QColor color)
-//{
-
-//}
-
 
 QImage Graphics::DrawGrid(const int gap)
 {
@@ -375,7 +273,7 @@ QImage Graphics::DrawGrid(const int gap)
 
 void Graphics::AddShape(Shape *s)
 {
-    qDebug() << "Add shape to list";
+    qDebug() << "Add shape to list" << s;
     shapeList.append(s);
 }
 
@@ -384,7 +282,7 @@ void Graphics::DeleteLastShape()
     if (!shapeList.isEmpty())
     {
         shapeList.pop_back();
-        qDebug() << "Remove shape";
+        qDebug() << "Remove shape: ";
     }
     else
         qDebug() << "Shape list is empty";
