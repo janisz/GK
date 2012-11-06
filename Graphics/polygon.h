@@ -12,6 +12,7 @@ public:
     void ChangeLastVertex(QPoint vertex);
     void Move(QPoint pos);
     void Draw(QImage &img);
+    void Fill(QImage &img);
     QRect GetRect();
     bool isConvex();
 protected:
