@@ -70,7 +70,11 @@ void Polygon::Fill(QImage &img)
 
     e.begin = vertexs.first();
     e.end = vertexs.last();
-    edgeList.append(e);
+    if (e.begin.y() > e.end.y())
+        std::swap(e.begin, e.end);
+
+    if (e.begin.y() != e.end.y())
+        edgeList.append(e);
 
     qSort(edgeList.begin(), edgeList.end(), CompEdges);
 
@@ -97,7 +101,7 @@ void Polygon::Fill(QImage &img)
         qSort(points);
         for (int i=0;i<points.count()-1;i+=2)
         {
-            Line l(QPoint(points[i], y), QPoint(points[i+1], y), color);
+            Line l(QPoint(points[i], y), QPoint(points[i+1], y), Qt::blue);
             l.Draw(img);
         }
         points.clear();
