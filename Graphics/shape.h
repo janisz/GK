@@ -8,16 +8,19 @@
 #include <QImage>
 #include <QDebug>
 #include "Globals.h"
-
+class Polygon;
 typedef QList<QPoint> QPointList;
 
 class Shape
 {
 public:
+    static Polygon* ClippingPolygon;
     //interface
     virtual QRect GetRect() = 0;
     virtual void Draw(QImage &img) = 0;
     virtual void Move(QPoint pos) = 0;
+    virtual void ClipToPolygon(QImage &img) = 0;
+
     //declaration
     void Move(int x, int y)         { Move(QPoint(x, y)); }
     QColor GetColor()               { return lineColor; }

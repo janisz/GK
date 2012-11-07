@@ -4,6 +4,8 @@
 #include "shape.h"
 #include "line.h"
 
+typedef QPair<QPoint, QPoint> Edge;
+
 class Polygon : public Shape
 {
 public:
@@ -13,10 +15,12 @@ public:
     void Move(QPoint pos);
     void Draw(QImage &img);
     void Fill(QImage &img);
+    QList<Edge> Edges();
     QRect GetRect();
     bool isConvex();
 protected:
     QList<QPoint> vertexs;
+    void ClipToPolygon(QImage &img);
     void DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img);
 
 };

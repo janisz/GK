@@ -26,13 +26,30 @@ void Polygon::Move(QPoint pos)
 void Polygon::Draw(QImage &img)
 {
     if (isFilled)   Fill(img);
-    for (int i=1;i<vertexs.size();i++)
+    foreach (Edge e, Edges())
     {
-        Line l(vertexs[i-1], vertexs[i], lineColor);
+        Line l(e.first, e.second, lineColor);
         l.Draw(img);
     }
-    Line l(vertexs.first(), vertexs.back(), lineColor);
-    l.Draw(img);
+}
+
+QList<Edge> Polygon::Edges()
+{
+    QList<Edge> edges;
+    for (int i=1;i<vertexs.size();i++)
+    {
+        edges.append(Edge(vertexs[i-1], vertexs[i]));
+    }
+    edges.append(Edge(vertexs.first(), vertexs.back()));
+    return edges;
+}
+
+void Polygon::ClipToPolygon(QImage &img)
+{
+//    QList<QPoint> outputList;
+//    outputList.append(this->vertexs);
+
+//    for (int i=1;i<)
 }
 
 void Polygon::DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img)
@@ -47,15 +64,10 @@ void Polygon::DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img
     }
 }
 
-struct Edge
-{
-    QPoint begin;
-    QPoint end;
-};
 
 bool CompEdges(const Edge a, const Edge b)
 {
-    return a.end.y() < b.end.y();
+    return a.second.y() < b.second.y();
 }
 
 void Polygon::Fill(QImage &img)
@@ -72,21 +84,21 @@ void Polygon::Fill(QImage &img)
 
     for (int i=1;i<vertexs.count();i++)
     {
-        e.begin = vertexs[i-1];
-        e.end = vertexs[i];
-        if (e.begin.y() > e.end.y())
-            std::swap(e.begin, e.end);
+        e.first = vertexs[i-1];
+        e.second = vertexs[i];
+        if (e.first.y() > e.second.y())
+            std::swap(e.first, e.second);
 
-        if (e.begin.y() != e.end.y())
+        if (e.first.y() != e.second.y())
             edgeList.append(e);
     }
 
-    e.begin = vertexs.first();
-    e.end = vertexs.last();
-    if (e.begin.y() > e.end.y())
-        std::swap(e.begin, e.end);
+    e.first = vertexs.first();
+    e.second = vertexs.last();
+    if (e.first.y() > e.second.y())
+        std::swap(e.first, e.second);
 
-    if (e.begin.y() != e.end.y())
+    if (e.first.y() != e.second.y())
         edgeList.append(e);
 
     qSort(edgeList.begin(), edgeList.end(), CompEdges);
@@ -95,17 +107,17 @@ void Polygon::Fill(QImage &img)
     {
         QVector<int> points;
 
-        while (edgeList.first().end.y() <= y)
+        while (edgeList.first().second.y() <= y)
             edgeList.removeFirst();
 
         for (int i=0;i<edgeList.count();i++)
         {
             e = edgeList[i];
 
-            if (e.begin.y() > y) continue;
+            if (e.first.y() > y) continue;
 
-            int x0 = e.begin.x();   int y0 = e.begin.y();
-            int x1 = e.end.x();     int y1 = e.end.y();
+            int x0 = e.first.x();   int y0 = e.first.y();
+            int x1 = e.second.x();     int y1 = e.second.y();
 
             int x = x0 + ((x1-x0)/(double)(y1-y0))*(double)(y-y0);
             points.append(x);

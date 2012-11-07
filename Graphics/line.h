@@ -16,6 +16,7 @@ public:
     QRect GetRect();
 protected:
     bool ClipToRect(int &x0, int &y0, int &x1, int &y1);
+    void ClipToPolygon(QImage &img);
     QPoint begin;
     QPoint end;
 };

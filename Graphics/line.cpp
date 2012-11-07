@@ -96,6 +96,11 @@ bool Line::ClipToRect(int &x0, int &y0, int &x1, int &y1)
     return accept;
 }
 
+void Line::ClipToPolygon(QImage &img)
+{
+
+}
+
 void Line::Draw(QImage &img)
 {
     int x0 = begin.x();
