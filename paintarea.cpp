@@ -16,6 +16,26 @@ PaintArea::PaintArea(QWidget *parent) :
     currentFigure = 0;
     texture = QImage(1, 1, QImage::Format_ARGB32);
     Canvas.SetCanvas(QImage(800, 600, QImage::Format_ARGB32));
+    DrawComb(100);
+}
+
+void PaintArea::DrawComb(int N)
+{
+    Polygon *comb = new Polygon();
+    comb->AddVertex(QPoint(5*N, 5));
+    comb->AddVertex(QPoint(5*N, 0));
+    comb->AddVertex(QPoint(0, 0));
+    comb->AddVertex(QPoint(0, 5));
+    for (int i=0;i<N;i++)
+    {
+        comb->AddVertex(QPoint(i*5+2, (N-i+1)*5));
+        comb->AddVertex(QPoint(i*5+5, 5));
+    }
+    comb->SetColor(lineColor);
+    comb->SetTexture(texture);
+    comb->isFilled = fillShape;
+    Canvas.AddShape(comb);
+
 }
 
 bool PaintArea::LoadImage(const QString &fileName)

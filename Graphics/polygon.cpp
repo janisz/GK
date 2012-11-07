@@ -148,7 +148,7 @@ void Polygon::DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img
 
     if (!ClipHLineToPolygon(x0, y, x1, y)) return;
 
-    for (int i=x0; i<x1; i++)
+    for (int i=x0; i<=x1; i++)
     {
         img.setPixel(QPoint(i, y), texture.pixel((i-h)%texture.width(), j%texture.height()));
     }

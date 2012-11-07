@@ -24,6 +24,7 @@ public:
     void ChangeTexture(QImage img) {texture = img; update();}
     void Fill(bool isFilled) {fillShape = isFilled; update();}
     void SetCurrentFigureAtribiutes();
+    void DrawComb(int N);
 
 public slots:
     void ClearImage();
