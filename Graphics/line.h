@@ -5,6 +5,7 @@
 #include "graphics.h"
 #include <QPoint>
 #include <QRect>
+#include "polygon.h"
 
 class Line : public Shape
 {
@@ -16,7 +17,8 @@ public:
     QRect GetRect();
 protected:
     bool ClipToRect(int &x0, int &y0, int &x1, int &y1);
-    void ClipToPolygon(QImage &img);
+    bool ClipToPolygon(int &x0, int &y0, int &x1, int &y1);
+    void ClipToPolygon(QImage &img) {};
     QPoint begin;
     QPoint end;
 };

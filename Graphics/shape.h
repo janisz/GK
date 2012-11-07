@@ -14,7 +14,9 @@ typedef QList<QPoint> QPointList;
 class Shape
 {
 public:
+
     static Polygon* ClippingPolygon;
+
     //interface
     virtual QRect GetRect() = 0;
     virtual void Draw(QImage &img) = 0;

@@ -96,9 +96,69 @@ bool Line::ClipToRect(int &x0, int &y0, int &x1, int &y1)
     return accept;
 }
 
-void Line::ClipToPolygon(QImage &img)
+long long int inline CrossProductLength(int ax, int ay, int bx, int by, int cx, int cy)
 {
+    int Ax = ax - bx, Ay = ay - by;
+    int Bx = cx - bx, By = cy - by;
+    return (Ax * By) - (Ay * Bx);
+}
 
+bool Inside(QPoint p, Edge e)
+{
+    return CrossProductLength(p.x(), p.y(), e.first.x(), e.first.y(), e.second.x(), e.second.y()) >= 0;
+}
+
+QPoint ComputeIntersection(QPoint A, QPoint B, Edge E)
+{
+    int x1 = A.x();
+    int y1 = A.y();
+    int x2 = B.x();
+    int y2 = B.y();
+
+    int x3 = E.first.x();
+    int y3 = E.first.y();
+    int x4 = E.second.x();
+    int y4 = E.second.y();
+
+    float x12 = x1 - x2;
+    float x34 = x3 - x4;
+    float y12 = y1 - y2;
+    float y34 = y3 - y4;
+
+    float c = x12 * y34 - y12 * x34;
+
+    float a = x1 * y2 - y1 * x2;
+    float b = x3 * y4 - y3 * x4;
+
+    float x = (a * x34 - b * x12) / c;
+    float y = (a * y34 - b * y12) / c;
+
+    return QPoint(x, y);
+}
+
+bool Line::ClipToPolygon(int &x0, int &y0, int &x1, int &y1)
+{
+    if (!ClippingPolygon) return true;
+    QPoint S = QPoint(x0, y0);
+    QPoint E = QPoint(x1, y1);
+    foreach (Edge clipEdge, ClippingPolygon->Edges())
+    {
+            if (Inside(E, clipEdge))
+            {
+                if (!Inside(S, clipEdge))
+                    S = ComputeIntersection(S, E, clipEdge);
+            }
+            else if (Inside(S, clipEdge))
+                E = ComputeIntersection(S, E, clipEdge);
+            else
+                return false;
+    }
+
+    qDebug() << E << S;
+
+    x0 = S.x(); y0 = S.y();
+    x1 = E.x(); y1 = E.y();
+    return true;
 }
 
 void Line::Draw(QImage &img)

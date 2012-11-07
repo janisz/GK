@@ -1,5 +1,12 @@
 #include "polygon.h"
 
+long long int inline CrossProductLength(int ax, int ay, int bx, int by, int cx, int cy)
+{
+    int Ax = ax - bx, Ay = ay - by;
+    int Bx = cx - bx, By = cy - by;
+    return (Ax * By) - (Ay * Bx);
+}
+
 Polygon::Polygon()
 {
     SetType(Globals::Polygon);
@@ -26,6 +33,7 @@ void Polygon::Move(QPoint pos)
 void Polygon::Draw(QImage &img)
 {
     if (isFilled)   Fill(img);
+
     foreach (Edge e, Edges())
     {
         Line l(e.first, e.second, lineColor);
@@ -44,12 +52,57 @@ QList<Edge> Polygon::Edges()
     return edges;
 }
 
+//bool Inside(QPoint p, Edge e)
+//{
+//    return CrossProductLength(p.x(), p.y(), e.first.x(), e.first.y(), e.second.x(), e.second.y()) >= 0;
+//}
+
+//QPoint ComputeIntersection(QPoint a, QPoint b, Edge e)
+//{
+//    double a1, b1, a2, b2;
+//    if (b.x()-a.x())
+//    {
+//        a1 = (b.y()-a.y())/(b.x()-a.x());
+//        b1 = (a.y()-a1*a.x());
+//    }
+//    if (e.second.x()-e.first.x())
+//    {
+//        a2 = (e.second.y()-e.first.y())/(e.second.x()-e.first.x());
+//        b2 = (e.first.y()-a1*e.first.x());
+//    }
+
+//    int x = (b2-b1)/(a2-a1);
+//    return QPoint(x, a1*x+b1);
+//}
+
 void Polygon::ClipToPolygon(QImage &img)
 {
 //    QList<QPoint> outputList;
-//    outputList.append(this->vertexs);
+//    outputList.append(vertexs);
 
-//    for (int i=1;i<)
+//    foreach (Edge clipEdge, ClippingPolygon->Edges())
+//    {
+//        QList<QPoint> inputList = outputList;
+//        outputList.clear();
+//        QPoint S = inputList.last();
+//        foreach (QPoint E, inputList)
+//        {
+//            if (Inside(E, clipEdge))
+//            {
+//                if (!Inside(S, clipEdge))
+//                    outputList.append(ComputeIntersection(S, E, clipEdge));
+//                outputList.append(E);
+//            }
+//            else if (Inside(S, clipEdge))
+//                outputList.append(ComputeIntersection(S, E, clipEdge));
+//            S = E;
+//        }
+//    }
+
+//    Polygon p;
+//    p.vertexs.append(outputList);
+//    qDebug() << p.vertexs;
+//    //p.Draw(img);
 }
 
 void Polygon::DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img)
@@ -73,7 +126,7 @@ bool CompEdges(const Edge a, const Edge b)
 void Polygon::Fill(QImage &img)
 {
     if (vertexs.count() < 3) return;
-
+    if (texture.width() == 800) img.fill(Qt::black);
     QList<Edge> edgeList;
     QList<Edge> activeEdgeList;
     Edge e;
@@ -147,22 +200,8 @@ QRect Polygon::GetRect()
     return QRect(leftTop, rightDown);
 }
 
-long long int inline CrossProductLength(int ax, int ay, int bx, int by, int cx, int cy)
-{
-    int Ax = ax - bx, Ay = ay - by;
-    int Bx = cx - bx, By = cy - by;
-    return (Ax * By) - (Ay * Bx);
-}
-
-
 bool Polygon::isConvex()
 {
-    // For each set of three adjacent points A, B, C,
-    // find the dot product AB · BC. If the sign of
-    // all the dot products is the same, the angles
-    // are all positive or negative (depending on the
-    // order in which we visit them) so the polygon
-    // is convex.
     bool got_negative = false;
     bool got_positive = false;
     int num_points = vertexs.size();
@@ -188,6 +227,5 @@ bool Polygon::isConvex()
         if (got_negative && got_positive) return false;
     }
 
-    // If we got this far, the polygon is convex.
     return true;
 }
