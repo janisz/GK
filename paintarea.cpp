@@ -14,6 +14,7 @@ PaintArea::PaintArea(QWidget *parent) :
     dragShape = false;
     setMouseTracking(true);
     currentFigure = 0;
+    texture = QImage(1, 1, QImage::Format_ARGB32);
     Canvas.SetCanvas(QImage(800, 600, QImage::Format_ARGB32));
 }
 
