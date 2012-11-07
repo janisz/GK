@@ -35,6 +35,18 @@ void Polygon::Draw(QImage &img)
     l.Draw(img);
 }
 
+void Polygon::DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img)
+{
+    if (y <= 0 || y >= 600) return;
+    x0 = x0 < 0 ? 1 : x0; x0 = x0 > 799 ? 799 : x0;
+    x1 = x1 < 0 ? 1 : x1; x1 = x1 > 799 ? 799 : x1;
+    j = j < 0 ? 0 : j;
+    for (int i=x0; i<x1; i++)
+    {
+        img.setPixel(QPoint(i, y), texture.pixel((i-h)%texture.width(), j%texture.height()));
+    }
+}
+
 struct Edge
 {
     QPoint begin;
@@ -56,6 +68,7 @@ void Polygon::Fill(QImage &img)
 
     int Ymax = this->GetRect().bottom();
     int Ymin = this->GetRect().top();
+    int Xmin = this->GetRect().left();
 
     for (int i=1;i<vertexs.count();i++)
     {
@@ -101,8 +114,7 @@ void Polygon::Fill(QImage &img)
         qSort(points);
         for (int i=0;i<points.count()-1;i+=2)
         {
-            Line l(QPoint(points[i], y), QPoint(points[i+1], y), Qt::blue);
-            l.Draw(img);
+            DrawTexturedHLine(points[i], points[i+1], y, Xmin, -Ymin+y, img);
         }
         points.clear();
     }

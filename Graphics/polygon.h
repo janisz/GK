@@ -17,6 +17,7 @@ public:
     bool isConvex();
 protected:
     QList<QPoint> vertexs;
+    void DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img);
 
 };
 
