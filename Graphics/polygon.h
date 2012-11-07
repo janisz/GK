@@ -21,6 +21,7 @@ public:
 protected:
     QList<QPoint> vertexs;
     void ClipToPolygon(QImage &img);
+    bool ClipHLineToPolygon(int &x0, int &y0, int &x1, int &y1);
     void DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img);
 
 };

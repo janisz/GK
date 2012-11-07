@@ -95,14 +95,10 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
 
 void PaintArea::paintEvent(QPaintEvent *event)
 {
+    SetCurrentFigureAtribiutes();
     QPainter painter;
     painter.begin(this);
     painter.drawImage(0, 0 , bacground);
-
-    if (currentFigure && currentFigure->GetType() == Globals::Polygon && ((Polygon*)currentFigure)->isConvex())
-    {
-        currentFigure->SetTexture(Canvas.GetCanvas());
-    }
     painter.drawImage(0, 0, Canvas.GetCanvas());
     painter.drawImage(0, 0, Canvas.DrawShape(currentFigure));
     painter.end();
@@ -118,7 +114,6 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
             {
                 currentFigure = new Polygon();
                 currentFigure->SetColor(lineColor);
-                currentFigure->isFilled = false;
             }
             ((Polygon*)currentFigure)->AddVertex(event->pos());
             drawPolygon = (currentShape == Globals::Polygon);
@@ -130,8 +125,6 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
             if (drawPolygon)
             {
                 qDebug() << "Convex: " << ((Polygon*)currentFigure)->isConvex();
-//                if (((Polygon*)currentFigure)->isConvex())
-//                    Polygon::ClippingPolygon = ((Polygon*)currentFigure);
                 drawPolygon = false;
                 return;
             }
@@ -144,6 +137,13 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
         break;
         case Qt::MiddleButton:
         {
+            if (currentFigure &&
+                currentFigure->GetType() == Globals::Polygon &&
+                ((Polygon*)currentFigure)->isConvex())
+            {
+                Polygon::ClippingPolygon = ((Polygon*)currentFigure);
+                return;
+            }
             delete currentFigure;
             currentFigure = NULL;
             update();
@@ -164,7 +164,6 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 {
     if (drawPolygon)
         return;
-    SetCurrentFigureAtribiutes();
     if (currentFigure)
         Canvas.AddShape(currentFigure);
     currentFigure = NULL;

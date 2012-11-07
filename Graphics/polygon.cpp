@@ -48,7 +48,7 @@ QList<Edge> Polygon::Edges()
     {
         edges.append(Edge(vertexs[i-1], vertexs[i]));
     }
-    edges.append(Edge(vertexs.first(), vertexs.back()));
+    edges.append(Edge(vertexs.back(), vertexs.first()));
     return edges;
 }
 
@@ -105,12 +105,40 @@ void Polygon::ClipToPolygon(QImage &img)
 //    //p.Draw(img);
 }
 
+bool Inside(QPoint p, Edge e);
+QPoint ComputeIntersection(QPoint A, QPoint B, Edge E);
+bool Polygon::ClipHLineToPolygon(int &x0, int &y0, int &x1, int &y1)
+{
+    if (!ClippingPolygon || ClippingPolygon == this) return true;
+    QPoint S = QPoint(x0, y0);
+    QPoint E = QPoint(x1, y1);
+    foreach (Edge clipEdge, ClippingPolygon->Edges())
+    {
+            if (Inside(E, clipEdge))
+            {
+                if (!Inside(S, clipEdge))
+                    S = ComputeIntersection(S, E, clipEdge);
+            }
+            else if (Inside(S, clipEdge))
+                E = ComputeIntersection(S, E, clipEdge);
+            else
+                return false;
+    }
+
+    x0 = S.x(); y0 = S.y();
+    x1 = E.x(); y1 = E.y();
+    return true;
+}
+
 void Polygon::DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img)
 {
     if (y <= 0 || y >= 600) return;
     x0 = x0 < 0 ? 1 : x0; x0 = x0 > 799 ? 799 : x0;
     x1 = x1 < 0 ? 1 : x1; x1 = x1 > 799 ? 799 : x1;
     j = j < 0 ? 0 : j;
+
+    if (!ClipHLineToPolygon(x0, y, x1, y)) return;
+
     for (int i=x0; i<x1; i++)
     {
         img.setPixel(QPoint(i, y), texture.pixel((i-h)%texture.width(), j%texture.height()));

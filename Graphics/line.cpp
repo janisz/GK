@@ -120,18 +120,18 @@ QPoint ComputeIntersection(QPoint A, QPoint B, Edge E)
     int x4 = E.second.x();
     int y4 = E.second.y();
 
-    float x12 = x1 - x2;
-    float x34 = x3 - x4;
-    float y12 = y1 - y2;
-    float y34 = y3 - y4;
+    int x12 = x1 - x2;
+    int x34 = x3 - x4;
+    int y12 = y1 - y2;
+    int y34 = y3 - y4;
 
     float c = x12 * y34 - y12 * x34;
 
-    float a = x1 * y2 - y1 * x2;
-    float b = x3 * y4 - y3 * x4;
+    int a = x1 * y2 - y1 * x2;
+    int b = x3 * y4 - y3 * x4;
 
-    float x = (a * x34 - b * x12) / c;
-    float y = (a * y34 - b * y12) / c;
+    int x = (a * x34 - b * x12) / c;
+    int y = (a * y34 - b * y12) / c;
 
     return QPoint(x, y);
 }
@@ -154,8 +154,6 @@ bool Line::ClipToPolygon(int &x0, int &y0, int &x1, int &y1)
                 return false;
     }
 
-    qDebug() << E << S;
-
     x0 = S.x(); y0 = S.y();
     x1 = E.x(); y1 = E.y();
     return true;
@@ -169,6 +167,7 @@ void Line::Draw(QImage &img)
     int x1 = end.x();
     int y1 = end.y();
 
+    if (!ClipToPolygon(x0, y0, x1, y1)) return;
     if (!ClipToRect(x0, y0, x1, y1)) return;
 
     int dx = abs(x1-x0);
