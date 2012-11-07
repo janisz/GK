@@ -40,9 +40,17 @@ MainWindow::MainWindow(QWidget *parent)
     gapSizeSpinBox->setValue(100);
     leftPanelLayout->addWidget(gapSizeSpinBox);
 
-    colorChooseButton = new QPushButton(this);
-    colorChooseButton->setText("Set Color");
+    colorChooseButton = new QPushButton("Line color", this);
     leftPanelLayout->addWidget(colorChooseButton);
+
+    fillColorChooseButton = new QPushButton("Fill Color", this);
+    leftPanelLayout->addWidget(fillColorChooseButton);
+
+    textureChooseButton = new QPushButton("Texture", this);
+    leftPanelLayout->addWidget(textureChooseButton);
+
+    filledCheckBox = new QCheckBox("Fill", this);
+    leftPanelLayout->addWidget(filledCheckBox);
 
     shapeChooserComboBox = new QComboBox(this);
     shapeChooserComboBox->addItems(shapeList);
@@ -62,6 +70,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect (testButton, SIGNAL(clicked()), this, SLOT(RunTest()));
     connect (newLineButton, SIGNAL(clicked()), this, SLOT(NewLine()));
     connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
+    connect (filledCheckBox, SIGNAL(clicked()), this, SLOT(SetFill()));
+    connect (textureChooseButton, SIGNAL(clicked()), this, SLOT(ChangeFillTexture()));
+    connect (fillColorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeFillColor()));
 
     setMouseTracking(true);
 }
@@ -87,6 +98,29 @@ void MainWindow::NewLine()
 void MainWindow::ChangeColor()
 {
     paintArea->SetLineColor(QColorDialog::getColor(Qt::red, this ));
+}
+
+void MainWindow::ChangeFillColor()
+{
+    QColor c = QColorDialog::getColor(Qt::red, this );
+    QImage img(1, 1, QImage::Format_ARGB32);
+    img.fill(c);
+    paintArea->ChangeTexture(img);
+}
+
+void MainWindow::ChangeFillTexture()
+{
+    QImage img;
+    QString fileName = QFileDialog::getOpenFileName(this,
+         tr("Open Image"), "/", tr("Image Files (*.bmp)"));
+    if (!img.load(fileName))
+        return;
+    paintArea->ChangeTexture(img);
+}
+
+void MainWindow::SetFill()
+{
+    paintArea->Fill(filledCheckBox->isChecked());
 }
 
 void MainWindow::ChangeShape()

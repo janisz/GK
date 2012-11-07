@@ -25,14 +25,14 @@ void Polygon::Move(QPoint pos)
 
 void Polygon::Draw(QImage &img)
 {
+    Fill(img);
     for (int i=1;i<vertexs.size();i++)
     {
-        Line l(vertexs[i-1], vertexs[i], color);
+        Line l(vertexs[i-1], vertexs[i], lineColor);
         l.Draw(img);
     }
-    Line l(vertexs.first(), vertexs.back(), color);
+    Line l(vertexs.first(), vertexs.back(), lineColor);
     l.Draw(img);
-    Fill(img);
 }
 
 struct Edge

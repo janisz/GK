@@ -17,6 +17,9 @@ private:
     QCheckBox *showGridCheckBox;
     QSpinBox *gapSizeSpinBox;
     QPushButton *colorChooseButton;
+    QPushButton *fillColorChooseButton;
+    QPushButton *textureChooseButton;
+    QCheckBox *filledCheckBox;
     QPushButton *testButton;
     QPushButton *newLineButton;
     QComboBox *shapeChooserComboBox;
@@ -34,6 +37,9 @@ public:
 
 public slots:
     void ChangeColor();
+    void ChangeFillColor();
+    void ChangeFillTexture();
+    void SetFill();
     void ChangeShape();
     void NewLine();
     void ShowGrid();

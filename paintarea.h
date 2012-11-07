@@ -21,6 +21,8 @@ public:
     void SetCurrentShape(Globals::ShapeType);
     void AddLine(const int x0, const int x1, const int y0, const int y1);
     void RunTest();
+    void ChangeTexture(QImage img) {texture = img; }
+    void Fill(bool isFilled) {fillShape = isFilled; }
 
 public slots:
     void ClearImage();
@@ -35,6 +37,8 @@ private:
     Graphics Canvas;
     QImage image;
     QImage bacground;
+    QImage texture;
+    bool fillShape;
     QColor lineColor;
     QPoint startPoint;
     Shape* currentFigure;

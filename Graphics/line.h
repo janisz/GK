@@ -9,8 +9,8 @@
 class Line : public Shape
 {
 public:
-    Line(QPoint begin, QPoint end, QColor color);
-    void SetColor(QColor color);
+    Line(QPoint begin, QPoint end, QColor lineColor);
+    void SetColor(QColor lineColor);
     void Draw(QImage &img);
     void Move(QPoint pos);
     QRect GetRect();

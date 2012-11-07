@@ -4,7 +4,7 @@ Line::Line(QPoint begin, QPoint end, QColor color)
 {
     this->begin = begin;
     this->end = end;
-    this->color = color;
+    this->lineColor = color;
     this->type = Globals::Line;
 }
 
@@ -114,7 +114,7 @@ void Line::Draw(QImage &img)
 
     while (true)
     {
-        img.setPixel(x0,y0, qRgb(color.red(), color.green(), color.blue()));
+        img.setPixel(x0,y0, qRgb(lineColor.red(), lineColor.green(), lineColor.blue()));
 
         if ((x0 == x1) && (y0 == y1))
                 break;

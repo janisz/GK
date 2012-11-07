@@ -19,14 +19,16 @@ public:
     virtual void Draw(QImage &img) = 0;
     virtual void Move(QPoint pos) = 0;
     //declaration
-    void Move(int x, int y) { Move(QPoint(x, y)); }
-    void SetColor(QColor color) { this->color = color; }
-    QColor GetColor() { return color; }
+    void Move(int x, int y)         { Move(QPoint(x, y)); }
+    QColor GetColor()               { return lineColor; }
+    void SetColor(QColor color)     { this->lineColor = color; }
+    void SetTexture(QImage image)   { this->texture = image; }
     void SetType(Globals::ShapeType newType) { type = newType; }
-    Globals::ShapeType GetType() { return type; }
+    Globals::ShapeType GetType()    { return type; }
     friend QDebug operator<< (QDebug d, const Shape *model);
 protected:
-    QColor color;
+    QColor lineColor;
+    QImage texture;
     Globals::ShapeType type;
 };
 
