@@ -25,7 +25,7 @@ void Polygon::Move(QPoint pos)
 
 void Polygon::Draw(QImage &img)
 {
-    Fill(img);
+    if (isFilled)   Fill(img);
     for (int i=1;i<vertexs.size();i++)
     {
         Line l(vertexs[i-1], vertexs[i], lineColor);

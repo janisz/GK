@@ -21,8 +21,9 @@ public:
     void SetCurrentShape(Globals::ShapeType);
     void AddLine(const int x0, const int x1, const int y0, const int y1);
     void RunTest();
-    void ChangeTexture(QImage img) {texture = img; }
-    void Fill(bool isFilled) {fillShape = isFilled; }
+    void ChangeTexture(QImage img) {texture = img; update();}
+    void Fill(bool isFilled) {fillShape = isFilled; update();}
+    void SetCurrentFigureAtribiutes();
 
 public slots:
     void ClearImage();

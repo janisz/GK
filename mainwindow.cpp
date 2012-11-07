@@ -112,7 +112,7 @@ void MainWindow::ChangeFillTexture()
 {
     QImage img;
     QString fileName = QFileDialog::getOpenFileName(this,
-         tr("Open Image"), "/", tr("Image Files (*.bmp)"));
+         tr("Open Image"), "", tr("Image Files (*.bmp)"));
     if (!img.load(fileName))
         return;
     paintArea->ChangeTexture(img);

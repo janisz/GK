@@ -30,6 +30,7 @@ bool PaintArea::LoadImage(const QString &fileName)
 void PaintArea::ClearImage()
 {
     bacground.fill(qRgb(0, 0, 0));
+    update();
 }
 
 void PaintArea::SetGridGap(int gap)
@@ -93,6 +94,7 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
 
 void PaintArea::paintEvent(QPaintEvent *event)
 {
+    SetCurrentFigureAtribiutes();
     QPainter painter;
     painter.begin(this);
     painter.drawImage(0, 0 , bacground);
@@ -128,7 +130,6 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
             if (Canvas.GetShapes().isEmpty())
                 return;
             currentFigure = Canvas.GetShapeAt(event->pos());
-            currentFigure->SetColor(lineColor);
             dragShape = true;
             update();
         }
@@ -141,6 +142,14 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
         }
     }
 
+}
+
+void PaintArea::SetCurrentFigureAtribiutes()
+{
+    if (!currentFigure) return;
+    currentFigure->SetColor(lineColor);
+    currentFigure->isFilled = fillShape;
+    currentFigure->SetTexture(texture);
 }
 
 void PaintArea::mouseReleaseEvent(QMouseEvent *event)

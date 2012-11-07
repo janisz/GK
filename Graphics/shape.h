@@ -26,6 +26,7 @@ public:
     void SetType(Globals::ShapeType newType) { type = newType; }
     Globals::ShapeType GetType()    { return type; }
     friend QDebug operator<< (QDebug d, const Shape *model);
+    bool isFilled;
 protected:
     QColor lineColor;
     QImage texture;
