@@ -17,7 +17,7 @@ public:
     void Fill(QImage &img);
     QList<Edge> Edges();
     QRect GetRect();
-    bool isConvex();
+    int isConvex();
 protected:
     QList<QPoint> vertexs;
     void ClipToPolygon(QImage &img);

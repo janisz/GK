@@ -43,12 +43,21 @@ void Polygon::Draw(QImage &img)
 
 QList<Edge> Polygon::Edges()
 {
+    if (isConvex() == 1)
+    {
+        QList<QPoint> result;
+           result.reserve( vertexs.size() ); // reserve is new in Qt 4.7
+           std::reverse_copy( vertexs.begin(), vertexs.end(), std::back_inserter( result ) );
+           vertexs = result;
+    }
+
     QList<Edge> edges;
     for (int i=1;i<vertexs.size();i++)
     {
         edges.append(Edge(vertexs[i-1], vertexs[i]));
     }
     edges.append(Edge(vertexs.back(), vertexs.first()));
+
     return edges;
 }
 
@@ -228,7 +237,7 @@ QRect Polygon::GetRect()
     return QRect(leftTop, rightDown);
 }
 
-bool Polygon::isConvex()
+int Polygon::isConvex()
 {
     bool got_negative = false;
     bool got_positive = false;
@@ -252,8 +261,8 @@ bool Polygon::isConvex()
         {
             got_positive = true;
         }
-        if (got_negative && got_positive) return false;
+        if (got_negative && got_positive) return 0;
     }
-
-    return true;
+    if (got_negative)   return 1;
+    return -1;
 }
