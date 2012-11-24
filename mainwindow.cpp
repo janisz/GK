@@ -43,8 +43,8 @@ MainWindow::MainWindow(QWidget *parent)
     colorChooseButton = new QPushButton("Line color", this);
     leftPanelLayout->addWidget(colorChooseButton);
 
-    fillColorChooseButton = new QPushButton("Fill Color", this);
-    leftPanelLayout->addWidget(fillColorChooseButton);
+//    fillColorChooseButton = new QPushButton("Fill Color", this);
+//    leftPanelLayout->addWidget(fillColorChooseButton);
 
     textureChooseButton = new QPushButton("Texture", this);
     leftPanelLayout->addWidget(textureChooseButton);
@@ -62,6 +62,36 @@ MainWindow::MainWindow(QWidget *parent)
     newLineButton = new QPushButton("Line", this);
     leftPanelLayout->addWidget(newLineButton);
 
+    colorModelComboBox = new QComboBox(this);
+    colorModelComboBox->addItem("RGB");
+    colorModelComboBox->addItem("HSV");
+    colorModelComboBox->addItem("XYZ");
+    leftPanelLayout->addWidget(colorModelComboBox);
+
+    colorMap = new QLabel(this);
+    colorMap->resize(200, 200);
+    colorMapImage = QImage(200, 200, QImage::Format_RGB16);
+    colorMapImage.fill(Qt::red);
+    colorMap->setPixmap(QPixmap::fromImage(colorMapImage));
+    leftPanelLayout->addWidget(colorMap);
+
+    colorIntensivitySlider = new QSlider(Qt::Horizontal, this);
+    colorIntensivitySlider->setRange(0, 100);
+    leftPanelLayout->addWidget(colorIntensivitySlider);
+
+    colorValueEdit = new QSpinBox*[3];
+    for (int i=0;i<3;i++)
+    {
+        colorValueEdit[i] = new QSpinBox(this);
+        colorValueEdit[i]->setRange(0, 100);
+        colorValueEdit[i]->setSingleStep(1);
+        colorValueEdit[i]->setPrefix("X:\t");
+        leftPanelLayout->addWidget(colorValueEdit[i]);
+        connect(colorValueEdit[i], SIGNAL(valueChanged(int)), this, SLOT(ChangeColorSpinBox()));
+    }
+    colorValueEdit[0]->setPrefix("R:\t");
+    colorValueEdit[1]->setPrefix("G:\t");
+    colorValueEdit[2]->setPrefix("B:\t");
 
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
@@ -72,9 +102,25 @@ MainWindow::MainWindow(QWidget *parent)
     connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
     connect (filledCheckBox, SIGNAL(clicked()), this, SLOT(SetFill()));
     connect (textureChooseButton, SIGNAL(clicked()), this, SLOT(ChangeFillTexture()));
-    connect (fillColorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeFillColor()));
+
+    connect (colorIntensivitySlider, SIGNAL(valueChanged(int)), this, SLOT(MoveSlider()));
+
 
     setMouseTracking(true);
+}
+
+QImage setRgbPalete(int r)
+{
+    QImage img(200, 200, QImage::Format_RGB16);
+    for (int i=0;i<200;i++)
+    {
+        for (int j=0;j<200;j++)
+        {
+            QColor c(r, i*2.55/2, j*2.55/2);
+            img.setPixel(i, j, c.rgb());
+        }
+    }
+    return img;
 }
 
 void MainWindow::RunTest()
@@ -97,14 +143,43 @@ void MainWindow::NewLine()
 
 void MainWindow::ChangeColor()
 {
-    paintArea->SetLineColor(QColorDialog::getColor(Qt::red, this ));
+
+}
+
+void MainWindow::ClickOnColorLabel()
+{
+    ChangeFillColor();
+}
+
+void MainWindow::ChangeColorSpinBox()
+{
+    colorIntensivitySlider->setValue(colorValueEdit[0]->value());
+    ChangeFillColor();
+}
+
+void MainWindow::MoveSlider()
+{
+    colorValueEdit[0]->setValue(colorIntensivitySlider->value());
+    ChangeFillColor();
 }
 
 void MainWindow::ChangeFillColor()
 {
-    QColor c = QColorDialog::getColor(Qt::red, this );
+    QColor c = QColor(colorValueEdit[0]->value() * 2.55,
+                      colorValueEdit[1]->value() * 2.55,
+                      colorValueEdit[2]->value() * 2.55);
+    qDebug() << c;
     QImage img(1, 1, QImage::Format_ARGB32);
     img.fill(c);
+    colorMapImage = setRgbPalete(c.red());
+    for (int i=0;i<5;i++)
+    {
+        colorMapImage.setPixel(colorValueEdit[1]->value()*2+i+2, colorValueEdit[2]->value() *2, 0);
+        colorMapImage.setPixel(colorValueEdit[1]->value()*2-i-2, colorValueEdit[2]->value() *2, 0);
+        colorMapImage.setPixel(colorValueEdit[1]->value()*2,   colorValueEdit[2]->value() *2+i+2, 0);
+        colorMapImage.setPixel(colorValueEdit[1]->value()*2,   colorValueEdit[2]->value() *2-i-2, 0);
+    }
+    colorMap->setPixmap(QPixmap::fromImage(colorMapImage));
     paintArea->ChangeTexture(img);
 }
 
@@ -142,11 +217,25 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
 void MainWindow::moveEvent(QMoveEvent *event)
 {
-    event->ignore();
+
+
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
+    QRect widgetRect = colorMap->geometry();
+    widgetRect.moveTopLeft(colorMap->parentWidget()->mapToGlobal(widgetRect.topLeft()));
+    if (widgetRect.contains(QCursor::pos()))
+    {
+        int x = colorMap->rect().right()  - event->pos().x() + leftPanelWidget->pos().x() + colorMap->pos().x()+10;
+        int y = colorMap->rect().bottom() - event->pos().y() + colorMap->pos().y() + leftPanelWidget->pos().y()-15;
+        if (x <= 200 && x >= 0 && y <= 200 && y >= 0)
+        {
+            colorValueEdit[1]->setValue(100-x/2);
+            colorValueEdit[2]->setValue(100-y/2);
+            update();
+        }
+    }
     event->accept();
 }
 

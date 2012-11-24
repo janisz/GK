@@ -23,8 +23,12 @@ private:
     QPushButton *testButton;
     QPushButton *newLineButton;
     QComboBox *shapeChooserComboBox;
-
+    QComboBox *colorModelComboBox;
+    QLabel *colorMap;
+    QSpinBox **colorValueEdit;
+    QSlider *colorIntensivitySlider;
     QStringList shapeList;
+    QImage colorMapImage;
 
 protected:
     void mouseMoveEvent(QMouseEvent *);
@@ -38,13 +42,15 @@ public:
 public slots:
     void ChangeColor();
     void ChangeFillColor();
+    void MoveSlider();
+    void ChangeColorSpinBox();
+    void ClickOnColorLabel();
     void ChangeFillTexture();
     void SetFill();
     void ChangeShape();
     void NewLine();
     void ShowGrid();
     void RunTest();
-
 };
 
 #endif // MAINWINDOW_H
