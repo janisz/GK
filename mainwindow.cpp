@@ -103,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect (filledCheckBox, SIGNAL(clicked()), this, SLOT(SetFill()));
     connect (textureChooseButton, SIGNAL(clicked()), this, SLOT(ChangeFillTexture()));
     connect (colorModelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangePalette()));
-    connect (colorIntensivitySlider, SIGNAL(valueChanged(int)), this, SLOT(MoveSlider()));
+    connect (colorIntensivitySlider, SIGNAL(sliderMoved(int)), this, SLOT(MoveSlider()));
 
     setMouseTracking(true);
 }
@@ -141,16 +141,37 @@ float* hsv2rgb(float hue, float sat, float val) {
         return result;
 }
 
+float *rgb2hsv(float red, float grn, float blu){
+        float hue, sat, val;
+        float x, f, i;
+        float *result = new float[3];
+
+        x = MIN(MIN(red, grn), blu);
+        val = MAX(MAX(red, grn), blu);
+        if (x == val){
+                hue = 0;
+                sat = 0;
+        }
+        else {
+                f = (red == x) ? grn-blu : ((grn == x) ? blu-red : red-grn);
+                i = (red == x) ? 3 : ((grn == x) ? 5 : 1);
+                hue = fmod((i-f/(val-x))*60, 360);
+                sat = ((val-x)/val);
+        }
+        result[0] = hue;
+        result[1] = sat;
+        result[2] = val;
+        return result;
+}
+
 QColor Hsv2Rgb(int h, int s, int v)
 {
     QColor color;
     float* c = hsv2rgb(h, s/100.0, v/100.0);
-    color.setRgb(c[0]*256, c[1]*256, c[2]*256);
+    color.setRgb(c[0]*255, c[1]*255, c[2]*255);
     delete c;
     return color;
 }
-
-
 
 QImage setRgbPalete(int r)
 {
@@ -197,15 +218,27 @@ void MainWindow::ChangePalette()
 {
     if (colorModelComboBox->currentIndex() == 0) //RGB
     {
+        QColor sc = selectedColor;
+        colorValueEdit[0]->setValue(round(sc.red()/2.55));
+        colorValueEdit[1]->setValue(round(sc.green()/2.55));
+        colorValueEdit[2]->setValue(round(sc.blue()/2.55));
         colorValueEdit[0]->setPrefix("R:\t");
         colorValueEdit[1]->setPrefix("G:\t");
         colorValueEdit[2]->setPrefix("B:\t");
     }
     if (colorModelComboBox->currentIndex() == 1) //HSV
     {
+        float r = selectedColor.redF();
+        float g = selectedColor.greenF();
+        float b = selectedColor.blueF();
+        float* c = rgb2hsv(r, g, b);
         colorValueEdit[0]->setPrefix("H:\t");
         colorValueEdit[1]->setPrefix("S:\t");
         colorValueEdit[2]->setPrefix("V:\t");
+        colorValueEdit[0]->setValue(round(c[0]/3.59));
+        colorValueEdit[1]->setValue(round(c[1]*100));
+        colorValueEdit[2]->setValue(round(c[2]*100));
+        delete c;
     }
     if (colorModelComboBox->currentIndex() == 2) //CIE
     {
@@ -213,6 +246,7 @@ void MainWindow::ChangePalette()
         colorValueEdit[1]->setPrefix("Y:\t");
         colorValueEdit[2]->setPrefix("Z:\t");
     }
+    ChangeFillColor();
 }
 
 void MainWindow::NewLine()
