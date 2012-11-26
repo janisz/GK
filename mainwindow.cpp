@@ -14,14 +14,14 @@ MainWindow::MainWindow(QWidget *parent)
     shapeList.append("StrongCircle");
 
     //Create UI
-    setFixedSize(1000, 620);
+    setFixedSize(1010, 620);
     setWindowTitle("Grafika Komputerowa");
 
     paintArea = new PaintArea(this);
     paintArea->show();
 
     leftPanelWidget = new QWidget(this);
-    leftPanelWidget->setGeometry(800, 0, 200, 600);
+    leftPanelWidget->setGeometry(800, 0, 210, 600);
     leftPanelLayout = new QVBoxLayout();
     leftPanelWidget->setLayout(leftPanelLayout);
 
@@ -96,18 +96,61 @@ MainWindow::MainWindow(QWidget *parent)
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
-    connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeColor()));
+//    connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeColor()));
     connect (testButton, SIGNAL(clicked()), this, SLOT(RunTest()));
     connect (newLineButton, SIGNAL(clicked()), this, SLOT(NewLine()));
     connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
     connect (filledCheckBox, SIGNAL(clicked()), this, SLOT(SetFill()));
     connect (textureChooseButton, SIGNAL(clicked()), this, SLOT(ChangeFillTexture()));
-
+    connect (colorModelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangePalette()));
     connect (colorIntensivitySlider, SIGNAL(valueChanged(int)), this, SLOT(MoveSlider()));
-
 
     setMouseTracking(true);
 }
+
+
+#define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
+
+float* hsv2rgb(float hue, float sat, float val) {
+        float red, grn, blu;
+        float i, f, p, q, t;
+        float *result = new float[3];
+
+        if(val==0) {
+                red = 0;
+                grn = 0;
+                blu = 0;
+        } else {
+                hue/=60;
+                i = floor(hue);
+                f = hue-i;
+                p = val*(1-sat);
+                q = val*(1-(sat*f));
+                t = val*(1-(sat*(1-f)));
+                if (i==0) {red=val; grn=t; blu=p;}
+                else if (i==1) {red=q; grn=val; blu=p;}
+                else if (i==2) {red=p; grn=val; blu=t;}
+                else if (i==3) {red=p; grn=q; blu=val;}
+                else if (i==4) {red=t; grn=p; blu=val;}
+                else if (i==5) {red=val; grn=p; blu=q;}
+        }
+        result[0] = red;
+        result[1] = grn;
+        result[2] = blu;
+        return result;
+}
+
+QColor Hsv2Rgb(int h, int s, int v)
+{
+    QColor color;
+    float* c = hsv2rgb(h, s/100.0, v/100.0);
+    color.setRgb(c[0]*256, c[1]*256, c[2]*256);
+    delete c;
+    return color;
+}
+
+
 
 QImage setRgbPalete(int r)
 {
@@ -116,16 +159,60 @@ QImage setRgbPalete(int r)
     {
         for (int j=0;j<200;j++)
         {
-            QColor c(r, i*2.55/2, j*2.55/2);
+            QColor c(r*2.55, i*2.55/2, j*2.55/2);
             img.setPixel(i, j, c.rgb());
         }
     }
     return img;
 }
 
+QImage setHsvPalete(int h)
+{
+    QImage img(200, 200, QImage::Format_RGB16);
+    for (int i=0;i<200;i++)
+    {
+        for (int j=0;j<200;j++)
+        {
+            QColor c = Hsv2Rgb(h*3.59, i/2, j/2);
+            img.setPixel(i, j, c.rgb());
+        }
+    }
+    return img;
+}
+
+QImage MainWindow::setPalete(int x)
+{
+    if (colorModelComboBox->currentIndex() == 0) //RGB
+        return setRgbPalete(x);
+    if (colorModelComboBox->currentIndex() == 1) //HSV
+        return setHsvPalete(x);
+}
+
 void MainWindow::RunTest()
 {
     paintArea->RunTest();
+}
+
+void MainWindow::ChangePalette()
+{
+    if (colorModelComboBox->currentIndex() == 0) //RGB
+    {
+        colorValueEdit[0]->setPrefix("R:\t");
+        colorValueEdit[1]->setPrefix("G:\t");
+        colorValueEdit[2]->setPrefix("B:\t");
+    }
+    if (colorModelComboBox->currentIndex() == 1) //HSV
+    {
+        colorValueEdit[0]->setPrefix("H:\t");
+        colorValueEdit[1]->setPrefix("S:\t");
+        colorValueEdit[2]->setPrefix("V:\t");
+    }
+    if (colorModelComboBox->currentIndex() == 2) //CIE
+    {
+        colorValueEdit[0]->setPrefix("X:\t");
+        colorValueEdit[1]->setPrefix("Y:\t");
+        colorValueEdit[2]->setPrefix("Z:\t");
+    }
 }
 
 void MainWindow::NewLine()
@@ -143,7 +230,24 @@ void MainWindow::NewLine()
 
 void MainWindow::ChangeColor()
 {
-
+    if (colorModelComboBox->currentIndex() == 0) //RGB
+    {
+        selectedColor = QColor(colorValueEdit[0]->value() * 2.55,
+                               colorValueEdit[1]->value() * 2.55,
+                               colorValueEdit[2]->value() * 2.55);
+    }
+    if (colorModelComboBox->currentIndex() == 1) //HSV
+    {
+        selectedColor = Hsv2Rgb(colorValueEdit[0]->value()*3.59,
+                                colorValueEdit[1]->value(),
+                                colorValueEdit[2]->value());
+    }
+    if (colorModelComboBox->currentIndex() == 0) //RGB
+    {
+        selectedColor = QColor(colorValueEdit[0]->value() * 2.55,
+                               colorValueEdit[1]->value() * 2.55,
+                               colorValueEdit[2]->value() * 2.55);
+    }
 }
 
 void MainWindow::ClickOnColorLabel()
@@ -165,19 +269,18 @@ void MainWindow::MoveSlider()
 
 void MainWindow::ChangeFillColor()
 {
-    QColor c = QColor(colorValueEdit[0]->value() * 2.55,
-                      colorValueEdit[1]->value() * 2.55,
-                      colorValueEdit[2]->value() * 2.55);
+    ChangeColor();
+    QColor c = selectedColor;
     qDebug() << c;
     QImage img(1, 1, QImage::Format_ARGB32);
     img.fill(c);
-    colorMapImage = setRgbPalete(c.red());
+    colorMapImage = setPalete(colorValueEdit[0]->value());
     for (int i=0;i<5;i++)
     {
-        colorMapImage.setPixel(colorValueEdit[1]->value()*2+i+2, colorValueEdit[2]->value() *2, 0);
-        colorMapImage.setPixel(colorValueEdit[1]->value()*2-i-2, colorValueEdit[2]->value() *2, 0);
-        colorMapImage.setPixel(colorValueEdit[1]->value()*2,   colorValueEdit[2]->value() *2+i+2, 0);
-        colorMapImage.setPixel(colorValueEdit[1]->value()*2,   colorValueEdit[2]->value() *2-i-2, 0);
+        colorMapImage.setPixel(colorValueEdit[1]->value()*2+i+2, colorValueEdit[2]->value() *2, 0xffffff);
+        colorMapImage.setPixel(colorValueEdit[1]->value()*2-i-2, colorValueEdit[2]->value() *2, 0xffffff);
+        colorMapImage.setPixel(colorValueEdit[1]->value()*2,   colorValueEdit[2]->value() *2+i+2, 0xffffff);
+        colorMapImage.setPixel(colorValueEdit[1]->value()*2,   colorValueEdit[2]->value() *2-i-2, 0xffffff);
     }
     colorMap->setPixmap(QPixmap::fromImage(colorMapImage));
     paintArea->ChangeTexture(img);

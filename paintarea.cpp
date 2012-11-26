@@ -16,7 +16,7 @@ PaintArea::PaintArea(QWidget *parent) :
     currentFigure = 0;
     texture = QImage(1, 1, QImage::Format_ARGB32);
     Canvas.SetCanvas(QImage(800, 600, QImage::Format_ARGB32));
-    DrawComb(100);
+//    DrawComb(100);
 }
 
 void PaintArea::DrawComb(int N)

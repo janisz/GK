@@ -29,6 +29,7 @@ private:
     QSlider *colorIntensivitySlider;
     QStringList shapeList;
     QImage colorMapImage;
+    QColor selectedColor;
 
 protected:
     void mouseMoveEvent(QMouseEvent *);
@@ -37,6 +38,7 @@ protected:
 
 public:
     MainWindow(QWidget *parent = 0);
+    QImage setPalete(int x);
     ~MainWindow();
 
 public slots:
@@ -51,6 +53,7 @@ public slots:
     void NewLine();
     void ShowGrid();
     void RunTest();
+    void ChangePalette();
 };
 
 #endif // MAINWINDOW_H
