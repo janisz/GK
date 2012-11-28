@@ -174,10 +174,19 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
 
 void PaintArea::SetCurrentFigureAtribiutes()
 {
-    if (!currentFigure) return;
+    if (!currentFigure) return;  
     currentFigure->SetColor(lineColor);
     currentFigure->isFilled = fillShape;
     currentFigure->SetTexture(texture);
+    if (!Canvas.GetShapes().empty())
+    {
+        Shape* s = Canvas.GetShapes().at(0);
+        s->SetTexture(texture);
+        QPainter painter;
+        painter.begin(this);
+        painter.drawImage(0, 0, Canvas.DrawShape(s));
+        painter.end();
+    }
 }
 
 void PaintArea::mouseReleaseEvent(QMouseEvent *event)
@@ -186,7 +195,7 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
         return;
     if (currentFigure)
         Canvas.AddShape(currentFigure);
-    currentFigure = NULL;
+//    currentFigure = NULL;
     dragShape = false;
     startPoint = QPoint(0,0);
 }

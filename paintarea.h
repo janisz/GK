@@ -21,7 +21,7 @@ public:
     void SetCurrentShape(Globals::ShapeType);
     void AddLine(const int x0, const int x1, const int y0, const int y1);
     void RunTest();
-    void ChangeTexture(QImage img) {texture = img; update();}
+    void ChangeTexture(QImage img) {texture = img; SetCurrentFigureAtribiutes(); repaint();}
     void Fill(bool isFilled) {fillShape = isFilled; update();}
     void SetCurrentFigureAtribiutes();
     void DrawComb(int N);

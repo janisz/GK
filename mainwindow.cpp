@@ -268,11 +268,11 @@ void MainWindow::ChangeColor()
                                 colorValueEdit[1]->value(),
                                 colorValueEdit[2]->value());
     }
-    if (colorModelComboBox->currentIndex() == 0) //RGB
+    if (colorModelComboBox->currentIndex() == 2) //CIE
     {
-        selectedColor = QColor(colorValueEdit[0]->value() * 2.55,
-                               colorValueEdit[1]->value() * 2.55,
-                               colorValueEdit[2]->value() * 2.55);
+        selectedColor = Xyz2Rgb(colorValueEdit[0]->value(),
+                               colorValueEdit[1]->value(),
+                               colorValueEdit[2]->value());
     }
 }
 
