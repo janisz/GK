@@ -3,7 +3,6 @@
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
-
     //Set constans and variables
     shapeList.append("Line");
     shapeList.append("Circle");
@@ -79,6 +78,8 @@ MainWindow::MainWindow(QWidget *parent)
     colorIntensivitySlider->setRange(0, 100);
     leftPanelLayout->addWidget(colorIntensivitySlider);
 
+
+
     colorValueEdit = new QSpinBox*[3];
     for (int i=0;i<3;i++)
     {
@@ -93,6 +94,11 @@ MainWindow::MainWindow(QWidget *parent)
     colorValueEdit[1]->setPrefix("G:\t");
     colorValueEdit[2]->setPrefix("B:\t");
 
+    colorCountSlider = new QSlider(Qt::Horizontal, this);
+    colorCountSlider->setRange(2, 512);
+    colorCountSlider->setTickInterval(10);
+    leftPanelLayout->addWidget(colorCountSlider);
+
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
@@ -102,73 +108,35 @@ MainWindow::MainWindow(QWidget *parent)
     connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
     connect (filledCheckBox, SIGNAL(clicked()), this, SLOT(SetFill()));
     connect (textureChooseButton, SIGNAL(clicked()), this, SLOT(ChangeFillTexture()));
+    connect (colorCountSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeFillTextureColors()));
     connect (colorModelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangePalette()));
-    connect (colorIntensivitySlider, SIGNAL(sliderMoved(int)), this, SLOT(MoveSlider()));
+    connect (colorIntensivitySlider, SIGNAL(valueChanged(int)), this, SLOT(MoveSlider()));
 
     setMouseTracking(true);
+
+//    Colors::Quantize("/tmp/tux.ppm", 30);
+//    QImage im;
+//    im.load("/tmp/t.ppm");
+//    qDebug() << im.bits();
+//    Colors::Quantize("/tmp/tux.ppm", 3);
+//    Colors::Quantize(im.scanLine(0), im.width(), im.height(), 2);
 }
 
-
-#define MIN(a,b) ((a)<(b)?(a):(b))
-#define MAX(a,b) ((a)>(b)?(a):(b))
-
-float* hsv2rgb(float hue, float sat, float val) {
-        float red, grn, blu;
-        float i, f, p, q, t;
-        float *result = new float[3];
-
-        if(val==0) {
-                red = 0;
-                grn = 0;
-                blu = 0;
-        } else {
-                hue/=60;
-                i = floor(hue);
-                f = hue-i;
-                p = val*(1-sat);
-                q = val*(1-(sat*f));
-                t = val*(1-(sat*(1-f)));
-                if (i==0) {red=val; grn=t; blu=p;}
-                else if (i==1) {red=q; grn=val; blu=p;}
-                else if (i==2) {red=p; grn=val; blu=t;}
-                else if (i==3) {red=p; grn=q; blu=val;}
-                else if (i==4) {red=t; grn=p; blu=val;}
-                else if (i==5) {red=val; grn=p; blu=q;}
-        }
-        result[0] = red;
-        result[1] = grn;
-        result[2] = blu;
-        return result;
-}
-
-float *rgb2hsv(float red, float grn, float blu){
-        float hue, sat, val;
-        float x, f, i;
-        float *result = new float[3];
-
-        x = MIN(MIN(red, grn), blu);
-        val = MAX(MAX(red, grn), blu);
-        if (x == val){
-                hue = 0;
-                sat = 0;
-        }
-        else {
-                f = (red == x) ? grn-blu : ((grn == x) ? blu-red : red-grn);
-                i = (red == x) ? 3 : ((grn == x) ? 5 : 1);
-                hue = fmod((i-f/(val-x))*60, 360);
-                sat = ((val-x)/val);
-        }
-        result[0] = hue;
-        result[1] = sat;
-        result[2] = val;
-        return result;
-}
 
 QColor Hsv2Rgb(int h, int s, int v)
 {
     QColor color;
     float* c = hsv2rgb(h, s/100.0, v/100.0);
     color.setRgb(c[0]*255, c[1]*255, c[2]*255);
+    delete c;
+    return color;
+}
+
+QColor Xyz2Rgb(int x, int y, int z)
+{
+    QColor color;
+    float* c = xyz2rgb(x*0.009, y*0.009, z*0.009);
+    color.setRgb(c[0]*255.0, c[1]*255.0, c[2]*255.0);
     delete c;
     return color;
 }
@@ -201,12 +169,28 @@ QImage setHsvPalete(int h)
     return img;
 }
 
+QImage setXyzPalete(int x)
+{
+    QImage img(200, 200, QImage::Format_RGB16);
+    for (int i=0;i<200;i++)
+    {
+        for (int j=0;j<200;j++)
+        {
+            QColor c = Xyz2Rgb(x, i/2, j/2);
+            img.setPixel(i, j, c.rgb());
+        }
+    }
+    return img;
+}
+
 QImage MainWindow::setPalete(int x)
 {
     if (colorModelComboBox->currentIndex() == 0) //RGB
         return setRgbPalete(x);
     if (colorModelComboBox->currentIndex() == 1) //HSV
         return setHsvPalete(x);
+    if (colorModelComboBox->currentIndex() == 2) //XYZ
+        return setXyzPalete(x);
 }
 
 void MainWindow::RunTest()
@@ -242,6 +226,14 @@ void MainWindow::ChangePalette()
     }
     if (colorModelComboBox->currentIndex() == 2) //CIE
     {
+        float r = selectedColor.redF();
+        float g = selectedColor.greenF();
+        float b = selectedColor.blueF();
+        float* c = rgb2xyz(r, g, b);
+        colorValueEdit[0]->setValue(round(c[0]*100));
+        colorValueEdit[1]->setValue(round(c[1]*100));
+        colorValueEdit[2]->setValue(round(c[2]*100));
+        delete c;
         colorValueEdit[0]->setPrefix("X:\t");
         colorValueEdit[1]->setPrefix("Y:\t");
         colorValueEdit[2]->setPrefix("Z:\t");
@@ -320,12 +312,25 @@ void MainWindow::ChangeFillColor()
     paintArea->ChangeTexture(img);
 }
 
+QString fileName = "tux.ppm";
+
 void MainWindow::ChangeFillTexture()
 {
     QImage img;
-    QString fileName = QFileDialog::getOpenFileName(this,
-         tr("Open Image"), "", tr("Image Files (*.bmp)"));
-    if (!img.load(fileName))
+    fileName = QFileDialog::getOpenFileName(this,
+         tr("Open Image"), "", tr("Image Files (*.ppm)"));
+    Colors::Quantize(fileName.toStdString().c_str(), colorCountSlider->value());
+    if (!img.load("out.ppm"))
+        return;
+    paintArea->ChangeTexture(img);
+}
+
+void MainWindow::ChangeFillTextureColors()
+{
+    QImage img;
+    statusBar->showMessage(QString("Count: %1").arg(colorCountSlider->value()));
+    Colors::Quantize(fileName.toStdString().c_str(), colorCountSlider->value());
+    if (!img.load("out.ppm"))
         return;
     paintArea->ChangeTexture(img);
 }

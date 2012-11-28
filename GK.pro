@@ -14,7 +14,10 @@ SOURCES += main.cpp\
     paintarea.cpp \
     Graphics/graphics.cpp \
     Graphics/line.cpp \
-    Graphics/polygon.cpp
+    Graphics/polygon.cpp \
+    Graphics/colors.cpp \
+    Graphics/octree.cpp \
+    Graphics/colorquantizer.cpp
 
 HEADERS  += mainwindow.h \
     paintarea.h \
@@ -22,4 +25,7 @@ HEADERS  += mainwindow.h \
     Globals.h \
     Graphics/shape.h \
     Graphics/line.h \
-    Graphics/polygon.h
+    Graphics/polygon.h \
+    Graphics/colors.h \
+    Graphics/octree.h \
+    Graphics/colorquantizer.h

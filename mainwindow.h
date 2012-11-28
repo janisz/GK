@@ -4,6 +4,9 @@
 #include <QtGui>
 #include "Globals.h"
 #include "paintarea.h"
+#include "Graphics/colors.h"
+#include "Graphics/octree.h"
+#include "Graphics/colorquantizer.h"
 
 class MainWindow : public QWidget
 {
@@ -27,6 +30,7 @@ private:
     QLabel *colorMap;
     QSpinBox **colorValueEdit;
     QSlider *colorIntensivitySlider;
+    QSlider *colorCountSlider;
     QStringList shapeList;
     QImage colorMapImage;
     QColor selectedColor;
@@ -48,6 +52,7 @@ public slots:
     void ChangeColorSpinBox();
     void ClickOnColorLabel();
     void ChangeFillTexture();
+    void ChangeFillTextureColors();
     void SetFill();
     void ChangeShape();
     void NewLine();
