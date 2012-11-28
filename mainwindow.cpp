@@ -13,14 +13,14 @@ MainWindow::MainWindow(QWidget *parent)
     shapeList.append("StrongCircle");
 
     //Create UI
-    setFixedSize(1010, 620);
+    setFixedSize(1010, 630);
     setWindowTitle("Grafika Komputerowa");
 
     paintArea = new PaintArea(this);
     paintArea->show();
 
     leftPanelWidget = new QWidget(this);
-    leftPanelWidget->setGeometry(800, 0, 210, 600);
+    leftPanelWidget->setGeometry(800, 0, 210, 630);
     leftPanelLayout = new QVBoxLayout();
     leftPanelWidget->setLayout(leftPanelLayout);
 
@@ -132,10 +132,17 @@ QColor Hsv2Rgb(int h, int s, int v)
     return color;
 }
 
+bool validColor = true;
+
 QColor Xyz2Rgb(int x, int y, int z)
 {
     QColor color;
     float* c = xyz2rgb(x*0.009, y*0.009, z*0.009);
+    validColor = (c[0] < 0 || c[1] < 0 || c[2] < 0) || (c[0] > 1 || c[1] > 1|| c[2] > 1);
+//    c[2]= MIN(1.0f,MAX(0.0f,c[2]));
+//    c[0]= MIN(1.0f,MAX(0.0f,c[0]));
+//    c[1]= MIN(1.0f,MAX(0.0f,c[1]));
+    if (validColor) c[0] = c[1] = c[2] = 0;
     color.setRgb(c[0]*255.0, c[1]*255.0, c[2]*255.0);
     delete c;
     return color;
@@ -271,8 +278,15 @@ void MainWindow::ChangeColor()
     if (colorModelComboBox->currentIndex() == 2) //CIE
     {
         selectedColor = Xyz2Rgb(colorValueEdit[0]->value(),
-                               colorValueEdit[1]->value(),
-                               colorValueEdit[2]->value());
+                                colorValueEdit[1]->value(),
+                                colorValueEdit[2]->value());
+        if (validColor)
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Color errr");
+            msgBox.setInformativeText("Not supported color?");
+            int ret = msgBox.exec();
+        }
     }
 }
 

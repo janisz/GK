@@ -40,10 +40,10 @@ float* xyz2rgb(float x, float y, float z)
     g = -0.969256*x + 1.875992*y + 0.041556*z;
     b =  0.055648*x - 0.204043*y + 1.057311*z;
 
-    if (r < 0 || g < 0 || b < 0)
-        r = g = b = 0;
-    if (r > 1 || g > 1 || b > 1)
-        r = g = b = 0;
+//    if (r < 0 || g < 0 || b < 0)
+//        r = g = b = 0;
+//    if (r > 1 || g > 1 || b > 1)
+//        r = g = b = 0;
 
     float *result = new float[3];
     result[0] = r;
