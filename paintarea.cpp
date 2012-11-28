@@ -207,7 +207,17 @@ void PaintArea::AddLine(const int x0, const int x1, const int y0, const int y1)
 
 void PaintArea::RunTest()
 {
-
+    for (int i=0;i<texture.width();i++)
+    {
+        for (int j=0;j<texture.height();j++)
+        {
+            QColor c = texture.pixel(i, j);
+            int y = 0.299*c.red() + 0.587*c.green() + 0.14*c.blue();
+            c.setRgb(y, y, y);
+            texture.setPixel(i,j, c.rgb());
+        }
+    }
+    repaint();
 }
 
 

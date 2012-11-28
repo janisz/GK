@@ -384,7 +384,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     if (widgetRect.contains(QCursor::pos()))
     {
         int x = colorMap->rect().right()  - event->pos().x() + leftPanelWidget->pos().x() + colorMap->pos().x()+10;
-        int y = colorMap->rect().bottom() - event->pos().y() + colorMap->pos().y() + leftPanelWidget->pos().y()-15;
+        int y = colorMap->rect().bottom() - event->pos().y() + colorMap->pos().y() + leftPanelWidget->pos().y();
         if (x <= 200 && x >= 0 && y <= 200 && y >= 0)
         {
             colorValueEdit[1]->setValue(100-x/2);
