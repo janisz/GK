@@ -6,6 +6,8 @@
 #include "Graphics/graphics.h"
 #include "Graphics/polygon.h"
 #include "Graphics/circle.h"
+#include "Graphics/aacircle.h"
+#include "Graphics/rectangle.h"
 #include <cmath>
 
 class PaintArea : public QWidget

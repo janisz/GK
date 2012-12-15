@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     Graphics/colors.cpp \
     Graphics/octree.cpp \
     Graphics/colorquantizer.cpp \
-    Graphics/circle.cpp
+    Graphics/circle.cpp \
+    Graphics/aacircle.cpp \
+    Graphics/rectangle.cpp
 
 HEADERS  += mainwindow.h \
     paintarea.h \
@@ -30,4 +32,6 @@ HEADERS  += mainwindow.h \
     Graphics/colors.h \
     Graphics/octree.h \
     Graphics/colorquantizer.h \
-    Graphics/circle.h
+    Graphics/circle.h \
+    Graphics/aacircle.h \
+    Graphics/rectangle.h
