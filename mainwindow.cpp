@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     shapeList.append("Line");
     shapeList.append("Circle");
     shapeList.append("AACircle");
-    shapeList.append("Ellipse");
+    shapeList.append("Rectangle");
     shapeList.append("Polygon");
     shapeList.append("StrongLine");
     shapeList.append("StrongCircle");
@@ -102,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
-//    connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeColor()));
+    connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeLineColor()));
     connect (testButton, SIGNAL(clicked()), this, SLOT(RunTest()));
     connect (newLineButton, SIGNAL(clicked()), this, SLOT(NewLine()));
     connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
@@ -259,6 +259,11 @@ void MainWindow::NewLine()
     y1 = QInputDialog::getInteger(this, "Insert value", "Y1");
 
     paintArea->AddLine(x0, x1, y0, y1);
+}
+
+void MainWindow::ChangeLineColor()
+{
+    paintArea->SetLineColor(QColorDialog::getColor(Qt::red, this ));
 }
 
 void MainWindow::ChangeColor()

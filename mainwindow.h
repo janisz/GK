@@ -59,6 +59,7 @@ public slots:
     void ShowGrid();
     void RunTest();
     void ChangePalette();
+    void ChangeLineColor();
 };
 
 #endif // MAINWINDOW_H

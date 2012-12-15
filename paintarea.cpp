@@ -116,7 +116,7 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
         case Globals::AACircle:
         currentFigure = new AACircle(QPoint(startPoint.x()+r*sgn(e.x()), startPoint.y()+r*sgn(e.y())), std::abs(r), lineColor);
         break;
-        case Globals::Ellipse:
+        case Globals::Rectangle:
         currentFigure = new Rectangle(QRect(startPoint, mousePos));
         break;
     }
