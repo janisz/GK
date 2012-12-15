@@ -126,26 +126,31 @@ void PaintArea::paintEvent(QPaintEvent *event)
 
 void PaintArea::mousePressEvent(QMouseEvent *event)
 {
+    drawPolygon = (currentShape == Globals::Polygon);
     switch (event->button())
     {
         case Qt::LeftButton:
         {
-            if (!currentFigure || !currentFigure->GetType() == Globals::Polygon)
+            if ((!currentFigure ||
+                 currentFigure->GetType() != Globals::Polygon || ((Polygon*)currentFigure)->isFinish) && drawPolygon)
             {
                 currentFigure = new Polygon();
                 currentFigure->SetColor(lineColor);
+            }           
+            if (drawPolygon && currentFigure && currentFigure->GetType() == Globals::Polygon && !((Polygon*)currentFigure)->isFinish )
+            {
+                ((Polygon*)currentFigure)->AddVertex(event->pos());
             }
-            ((Polygon*)currentFigure)->AddVertex(event->pos());
-            drawPolygon = (currentShape == Globals::Polygon);
             startPoint = event->pos();
         }
         break;
         case Qt::RightButton:
         {
-            if (drawPolygon)
+            if (drawPolygon && currentFigure->GetType() == Globals::Polygon)
             {
                 qDebug() << "Convex: " << ((Polygon*)currentFigure)->isConvex();
                 drawPolygon = false;
+                ((Polygon*)currentFigure)->isFinish = true;
                 return;
             }
             if (Canvas.GetShapes().isEmpty())
