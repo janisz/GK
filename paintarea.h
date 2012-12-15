@@ -5,6 +5,7 @@
 #include "Globals.h"
 #include "Graphics/graphics.h"
 #include "Graphics/polygon.h"
+#include "Graphics/circle.h"
 #include <cmath>
 
 class PaintArea : public QWidget

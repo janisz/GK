@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     Graphics/polygon.cpp \
     Graphics/colors.cpp \
     Graphics/octree.cpp \
-    Graphics/colorquantizer.cpp
+    Graphics/colorquantizer.cpp \
+    Graphics/circle.cpp
 
 HEADERS  += mainwindow.h \
     paintarea.h \
@@ -28,4 +29,5 @@ HEADERS  += mainwindow.h \
     Graphics/polygon.h \
     Graphics/colors.h \
     Graphics/octree.h \
-    Graphics/colorquantizer.h
+    Graphics/colorquantizer.h \
+    Graphics/circle.h

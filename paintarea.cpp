@@ -107,6 +107,12 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
         case Globals::Line:
         currentFigure = new Line(startPoint, event->pos(), lineColor);
         break;
+        case Globals::StrongLine:
+        currentFigure = new Line(startPoint, event->pos(), lineColor, 5);
+        break;
+        case Globals::Circle:
+        currentFigure = new Circle(QPoint(startPoint.x()+r*sgn(e.x()), startPoint.y()+r*sgn(e.y())), std::abs(r), lineColor);
+        break;
     }
     update();
 }
