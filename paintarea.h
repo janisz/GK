@@ -28,6 +28,7 @@ public:
     void Fill(bool isFilled) {fillShape = isFilled; update();}
     void SetCurrentFigureAtribiutes();
     void DrawComb(int N);
+    QImage getImageUnderRect();
 
 public slots:
     void ClearImage();
@@ -54,6 +55,7 @@ private:
     QList<QPoint> polygonPoints;
     Globals::ShapeType currentShape;
     Shape* DrawPolygon();
+    Rectangle* filterArea;
     
 };
 

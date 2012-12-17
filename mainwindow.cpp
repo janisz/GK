@@ -1,5 +1,10 @@
 #include "mainwindow.h"
 
+QLabel *histogramRed;
+QLabel *histogramBlue;
+QLabel *histogramGreen;
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
@@ -13,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     shapeList.append("StrongCircle");
 
     //Create UI
-    setFixedSize(1010, 630);
+    setFixedSize(1010, 1030);
     setWindowTitle("Grafika Komputerowa");
 
     paintArea = new PaintArea(this);
@@ -41,9 +46,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     colorChooseButton = new QPushButton("Line color", this);
     leftPanelLayout->addWidget(colorChooseButton);
-
-//    fillColorChooseButton = new QPushButton("Fill Color", this);
-//    leftPanelLayout->addWidget(fillColorChooseButton);
 
     textureChooseButton = new QPushButton("Texture", this);
     leftPanelLayout->addWidget(textureChooseButton);
@@ -113,13 +115,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect (colorIntensivitySlider, SIGNAL(valueChanged(int)), this, SLOT(MoveSlider()));
 
     setMouseTracking(true);
-
-//    Colors::Quantize("/tmp/tux.ppm", 30);
-//    QImage im;
-//    im.load("/tmp/t.ppm");
-//    qDebug() << im.bits();
-//    Colors::Quantize("/tmp/tux.ppm", 3);
-//    Colors::Quantize(im.scanLine(0), im.width(), im.height(), 2);
 }
 
 
@@ -139,9 +134,6 @@ QColor Xyz2Rgb(int x, int y, int z)
     QColor color;
     float* c = xyz2rgb(x*0.009, y*0.009, z*0.009);
     validColor = (c[0] < 0 || c[1] < 0 || c[2] < 0) || (c[0] > 1 || c[1] > 1|| c[2] > 1);
-//    c[2]= MIN(1.0f,MAX(0.0f,c[2]));
-//    c[0]= MIN(1.0f,MAX(0.0f,c[0]));
-//    c[1]= MIN(1.0f,MAX(0.0f,c[1]));
     if (validColor) c[0] = c[1] = c[2] = 0;
     color.setRgb(c[0]*255.0, c[1]*255.0, c[2]*255.0);
     delete c;
@@ -202,7 +194,7 @@ QImage MainWindow::setPalete(int x)
 
 void MainWindow::RunTest()
 {
-    paintArea->RunTest();
+            DrawHistogram();
 }
 
 void MainWindow::ChangePalette()
@@ -400,7 +392,95 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     event->accept();
 }
 
+
+QPixmap ImageHistogram(QImage img)
+{
+    if (!histogramRed)   histogramRed   = new QLabel();
+    if (!histogramBlue)  histogramBlue  = new QLabel();
+    if (!histogramGreen) histogramGreen = new QLabel();
+    int redCount[256] = {0};
+    int greenCount[256] = {0};
+    int blueCount[256] = {0};
+
+    int maxR, maxB, maxG;
+    maxR = maxB = maxG = 1;
+
+    for (int i=0;i<img.width();i++)
+    {
+        for (int j=0;j<img.height();j++)
+        {
+            QColor c = img.pixel(i, j);
+            redCount[c.red()]++;
+            greenCount[c.green()]++;
+            blueCount[c.blue()]++;
+        }
+    }
+
+    for (int i=0;i<256;i++)
+    {
+        maxR = MAX(maxR, redCount[i]);
+        maxG = MAX(maxG, greenCount[i]);
+        maxB = MAX(maxB, blueCount[i]);
+    }
+
+    for (int i=0;i<256;i++)
+    {
+        redCount[i] *= 256.0;
+        redCount[i] /= maxR;
+        greenCount[i] *= 256.0;
+        greenCount[i] /= maxG;
+        blueCount[i] *= 256.0;
+        blueCount[i] /= maxB;
+    }
+
+    QImage red(256, 256, QImage::Format_ARGB32);
+    red.fill(Qt::black);
+    QImage green(256, 256, QImage::Format_ARGB32);
+    green.fill(Qt::black);
+    QImage blue(256, 256, QImage::Format_ARGB32);
+    green.fill(Qt::black);
+    QString s = "";
+    for (int i=0;i<256;i++)
+    {
+        QColor c(255, 0, 0);
+        qDebug() << i << redCount[i];
+        for (int j=0;j<redCount[i];j++)
+        {
+            red.setPixel(i, j, c.rgb());
+        }
+        c = Qt::green;
+        for (int j=0;j<greenCount[i];j++)
+        {
+            green.setPixel(i, j, c.rgb());
+        }
+        c = Qt::blue;
+        for (int j=0;j<blueCount[i];j++)
+        {
+            blue.setPixel(i, j, c.rgb());
+        }
+    }
+    qDebug()<<s;
+    histogramRed->setPixmap(QPixmap::fromImage(red));
+    histogramGreen->setPixmap(QPixmap::fromImage(green));
+    histogramBlue->setPixmap(QPixmap::fromImage(blue));
+
+    histogramRed->show();
+    histogramGreen->show();
+    histogramBlue->show();
+
+    histogramRed->setGeometry(10, 820, 256, 256);
+    histogramBlue->setGeometry(270, 820, 256, 256);
+    histogramGreen->setGeometry(530, 820, 256, 256);
+
+}
+
+void MainWindow::DrawHistogram()
+{
+    QImage img = paintArea->getImageUnderRect();
+    ImageHistogram(img);
+}
+
 MainWindow::~MainWindow()
 {
-    
+
 }

@@ -5,7 +5,6 @@
 #include "Globals.h"
 #include "paintarea.h"
 #include "Graphics/colors.h"
-#include "Graphics/octree.h"
 #include "Graphics/colorquantizer.h"
 
 class MainWindow : public QWidget
@@ -35,6 +34,7 @@ private:
     QImage colorMapImage;
     QColor selectedColor;
 
+
 protected:
     void mouseMoveEvent(QMouseEvent *);
     void moveEvent(QMoveEvent *);
@@ -43,6 +43,7 @@ protected:
 public:
     MainWindow(QWidget *parent = 0);
     QImage setPalete(int x);
+    void DrawHistogram();
     ~MainWindow();
 
 public slots:

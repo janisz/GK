@@ -6,6 +6,7 @@ PaintArea::PaintArea(QWidget *parent) :
 {
     QImage newImage(800, 600, QImage::Format_ARGB32);
     image = newImage;
+    filterArea = new Rectangle(QRect(0, 0, 800, 600));
     currentShape = Globals::Line;
     bacground = newImage;
     lineColor = Qt::red;
@@ -16,7 +17,12 @@ PaintArea::PaintArea(QWidget *parent) :
     currentFigure = 0;
     texture = QImage(1, 1, QImage::Format_ARGB32);
     Canvas.SetCanvas(QImage(800, 600, QImage::Format_ARGB32));
-//    DrawComb(100);
+}
+
+QImage PaintArea::getImageUnderRect()
+{
+    QRect rect =  filterArea->GetRect();
+    return Canvas.GetCanvas().copy(rect);
 }
 
 void PaintArea::DrawComb(int N)
@@ -89,7 +95,12 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
 {
     event->ignore();
     static QPoint mousePos;
-    if (dragShape)
+    if (dragShape && currentShape == Globals::Rectangle)
+    {
+        filterArea->Move(event->pos() - mousePos);
+        update();
+    }
+    else if (dragShape)
     {
         if (currentFigure)
             currentFigure->Move(event->pos() - mousePos);
@@ -128,12 +139,14 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
 void PaintArea::paintEvent(QPaintEvent *event)
 {
     SetCurrentFigureAtribiutes();
-    QPainter painter;
-    painter.begin(this);
-    painter.drawImage(0, 0 , bacground);
-    painter.drawImage(0, 0, Canvas.GetCanvas());
-    painter.drawImage(0, 0, Canvas.DrawShape(currentFigure));
-    painter.end();
+    QPainter *painter = new QPainter(this);
+    painter->begin(this);
+    painter->drawImage(0, 0 , bacground);
+    painter->drawImage(0, 0, Canvas.GetCanvas());
+    painter->drawImage(0, 0, Canvas.DrawShape(currentFigure));
+    painter->drawImage(0, 0, Canvas.DrawShape(filterArea));
+    painter->end();
+    delete painter;
 }
 
 void PaintArea::mousePressEvent(QMouseEvent *event)
@@ -152,6 +165,10 @@ void PaintArea::mousePressEvent(QMouseEvent *event)
             if (drawPolygon && currentFigure && currentFigure->GetType() == Globals::Polygon && !((Polygon*)currentFigure)->isFinish )
             {
                 ((Polygon*)currentFigure)->AddVertex(event->pos());
+            }
+            if (currentShape == Globals::Rectangle)
+            {
+                Canvas.GetShapes().removeAll(filterArea);
             }
             startPoint = event->pos();
         }
@@ -199,10 +216,7 @@ void PaintArea::SetCurrentFigureAtribiutes()
     {
         Shape* s = Canvas.GetShapes().at(0);
         s->SetTexture(texture);
-        QPainter painter;
-        painter.begin(this);
-        painter.drawImage(0, 0, Canvas.DrawShape(s));
-        painter.end();
+
     }
 }
 
@@ -210,11 +224,18 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
 {
     if (drawPolygon)
         return;
-    if (currentFigure)
-        Canvas.AddShape(currentFigure);
-//    currentFigure = NULL;
+
     dragShape = false;
     startPoint = QPoint(0,0);
+
+    if (currentFigure->GetType() == Globals::Rectangle)
+    {
+        filterArea = (Rectangle*)currentFigure;
+        return;
+    }
+
+    if (currentFigure)
+        Canvas.AddShape(currentFigure);
 }
 
 void PaintArea::AddLine(const int x0, const int x1, const int y0, const int y1)
