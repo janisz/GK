@@ -8,7 +8,7 @@
 class Rectangle : public Shape
 {
 public:
-    Rectangle() {}
+    Rectangle() {SetType(Globals::Rectangle);}
     Rectangle(QRect r);
     QRect GetRect() {return rect; }
     void Draw(QImage &img);

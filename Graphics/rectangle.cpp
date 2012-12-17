@@ -2,6 +2,7 @@
 
 Rectangle::Rectangle(QRect r)
 {
+    SetType(Globals::Rectangle);
     rect = r;
 }
 
@@ -16,6 +17,7 @@ void Rectangle::Move(QPoint pos)
 
 void Rectangle::Draw(QImage &img)
 {
+    lineColor = Qt::white;
     Line *l = new Line(rect.topLeft(), rect.topRight(), lineColor);
     l->Draw(img);
     delete l;

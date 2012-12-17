@@ -16,7 +16,6 @@ SOURCES += main.cpp\
     Graphics/line.cpp \
     Graphics/polygon.cpp \
     Graphics/colors.cpp \
-    Graphics/octree.cpp \
     Graphics/colorquantizer.cpp \
     Graphics/circle.cpp \
     Graphics/aacircle.cpp \
@@ -30,7 +29,6 @@ HEADERS  += mainwindow.h \
     Graphics/line.h \
     Graphics/polygon.h \
     Graphics/colors.h \
-    Graphics/octree.h \
     Graphics/colorquantizer.h \
     Graphics/circle.h \
     Graphics/aacircle.h \
