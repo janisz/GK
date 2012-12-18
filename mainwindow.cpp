@@ -57,8 +57,11 @@ MainWindow::MainWindow(QWidget *parent)
     shapeChooserComboBox->addItems(shapeList);
     leftPanelLayout->addWidget(shapeChooserComboBox);
 
-    testButton = new QPushButton("Test",  this);
+    testButton = new QPushButton("Histogram",  this);
     leftPanelLayout->addWidget(testButton);
+
+    strechHistogramButton = new QPushButton("Strech Histogram",  this);
+    leftPanelLayout->addWidget(strechHistogramButton);
 
     newLineButton = new QPushButton("Line", this);
     leftPanelLayout->addWidget(newLineButton);
@@ -103,6 +106,10 @@ MainWindow::MainWindow(QWidget *parent)
     angleSlider->setRange(0, 360);
     leftPanelLayout->addWidget(angleSlider);
 
+    scaleSlider = new QSlider(Qt::Horizontal, this);
+    scaleSlider->setRange(0, 20);
+    leftPanelLayout->addWidget(scaleSlider);
+
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
@@ -116,7 +123,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect (colorModelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangePalette()));
     connect (colorIntensivitySlider, SIGNAL(valueChanged(int)), this, SLOT(MoveSlider()));
     connect (angleSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeAngle()));
-
+    connect (strechHistogramButton, SIGNAL(clicked()), this, SLOT(strechHistogram()));
+    connect (scaleSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeScale()));
     setMouseTracking(true);
 }
 
@@ -483,8 +491,18 @@ void ImageHistogram(QImage img)
 
 void MainWindow::DrawHistogram()
 {
-    QImage img = paintArea->getImageUnderRect();
+    QImage img = paintArea->filteredImage;
     ImageHistogram(img);
+}
+
+void MainWindow::strechHistogram()
+{
+    paintArea->StrechHistogram();
+}
+
+void MainWindow::ChangeScale()
+{
+    paintArea->ScaleImage(scaleSlider->value() - 10);
 }
 
 MainWindow::~MainWindow()

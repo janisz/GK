@@ -34,6 +34,7 @@ public:
     void RotateImage(int angle);
     void MatrixFilter(double filter[], int size, int factor, int bias);
     void ScaleImage(float k);
+    QImage filteredImage;
 
 public slots:
     void ClearImage();
@@ -46,7 +47,7 @@ protected:
 
 private:
     Graphics Canvas;
-    QImage filteredImage;
+
     QImage image;
     QImage bacground;
     QImage texture;

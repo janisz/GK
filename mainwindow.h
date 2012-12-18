@@ -23,6 +23,7 @@ private:
     QPushButton *textureChooseButton;
     QCheckBox *filledCheckBox;
     QPushButton *testButton;
+    QPushButton *strechHistogramButton;
     QPushButton *newLineButton;
     QComboBox *shapeChooserComboBox;
     QComboBox *colorModelComboBox;
@@ -31,6 +32,7 @@ private:
     QSlider *colorIntensivitySlider;
     QSlider *colorCountSlider;
     QSlider *angleSlider;
+    QSlider *scaleSlider;
     QStringList shapeList;
     QImage colorMapImage;
     QColor selectedColor;
@@ -49,6 +51,7 @@ public:
 
 public slots:
     void ChangeColor();
+    void strechHistogram();
     void ChangeFillColor();
     void MoveSlider();
     void ChangeColorSpinBox();
@@ -63,6 +66,7 @@ public slots:
     void ChangePalette();
     void ChangeLineColor();
     void ChangeAngle();
+    void ChangeScale();
 };
 
 #endif // MAINWINDOW_H

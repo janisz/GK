@@ -155,9 +155,6 @@ void PaintArea::RotateImage(int angle)
 {
     qDebug() << angle;
 
-    StrechHistogram();
-    update();
-            return;
     filteredImage = getImageUnderRect();
 
     int x = filteredImage.width();
@@ -278,6 +275,8 @@ void PaintArea::ScaleImage(float k)
         }
 
     filteredImage = scaledImage;
+
+    update();
 }
 
 
