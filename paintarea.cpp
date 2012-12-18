@@ -155,7 +155,7 @@ void PaintArea::RotateImage(int angle)
 {
     qDebug() << angle;
 
-    ScaleImage((angle)/36.0);
+    StrechHistogram();
     update();
             return;
     filteredImage = getImageUnderRect();
@@ -193,6 +193,56 @@ void PaintArea::RotateImage(int angle)
         }
 
     filteredImage = rotatedImage;
+    update();
+}
+
+void PaintArea::StrechHistogram()
+{
+    filteredImage = getImageUnderRect();
+
+    QImage strechedImage = filteredImage;
+
+    int maxR, maxB, maxG;
+    maxR = maxB = maxG = 0;
+    int minR, minB, minG;
+    minR = minB = minG = 65000;
+
+    for (int i=0;i<filteredImage.width();i++)
+    {
+        for (int j=0;j<filteredImage.height();j++)
+        {
+            QColor c = filteredImage.pixel(i, j);
+            if (maxR < c.red())  maxR = c.red();
+            if (maxG < c.green())maxG = c.green();
+            if (maxB < c.blue()) maxB = c.blue();
+
+            if (minR > c.red())  minR = c.red();
+            if (minG > c.green())minG = c.green();
+            if (minB > c.blue()) minB = c.blue();
+        }
+    }
+
+    qDebug() << maxR << " " << minR;
+    qDebug() << maxG << " " << minG;
+    qDebug() << maxB << " " << minB;
+
+    for (int i=0;i<filteredImage.width();i++)
+    {
+        for (int j=0;j<filteredImage.height();j++)
+        {
+             float r = qRed(filteredImage.pixel(i,j));
+             float g = qGreen(filteredImage.pixel(i,j));
+             float b = qBlue(filteredImage.pixel(i,j));
+
+             r = ((float)(r-minR)*255/(maxR-minR));
+             g = ((float)(g-minG)*255/(maxG-minG));
+             b = ((float)(b-minB)*255/(maxB-minB));
+
+             strechedImage.setPixel(i,j, qRgb(r,g,b));
+        }
+    }
+
+    filteredImage = strechedImage;
     update();
 }
 
