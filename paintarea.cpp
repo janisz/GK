@@ -100,7 +100,7 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
     if (dragShape && currentShape == Globals::Rectangle)
     {
         filterArea->Move(event->pos() - mousePos);
-        update();
+        doFilter();
     }
     else if (dragShape)
     {
@@ -173,7 +173,7 @@ void PaintArea::RotateImage(int angle)
                           { sin(an),  cos(an)}};
 
     for (int i = 0; i < x ; ++i)
-        for (int j = 0; j < y ; ++j)
+    for (int j = 0; j < y ; ++j)
         {
             float *vector = new float[2];
             vector[0] = i-x0;
@@ -188,9 +188,10 @@ void PaintArea::RotateImage(int angle)
                 filteredImage.pixel((int)vector[0], (int)vector[1]))
                 rotatedImage.setPixel(i, j, filteredImage.pixel((int)vector[0], (int)vector[1]) );
         }
-
+    this->rotation = angle;
     filteredImage = rotatedImage;
-    update();
+    this->filterType = Globals::Rotate;
+        update();
 }
 
 void PaintArea::StrechHistogram()
@@ -205,8 +206,7 @@ void PaintArea::StrechHistogram()
     minR = minB = minG = 65000;
 
     for (int i=0;i<filteredImage.width();i++)
-    {
-        for (int j=0;j<filteredImage.height();j++)
+    for (int j=0;j<filteredImage.height();j++)
         {
             QColor c = filteredImage.pixel(i, j);
             if (maxR < c.red())  maxR = c.red();
@@ -217,15 +217,13 @@ void PaintArea::StrechHistogram()
             if (minG > c.green())minG = c.green();
             if (minB > c.blue()) minB = c.blue();
         }
-    }
 
     qDebug() << maxR << " " << minR;
     qDebug() << maxG << " " << minG;
     qDebug() << maxB << " " << minB;
 
     for (int i=0;i<filteredImage.width();i++)
-    {
-        for (int j=0;j<filteredImage.height();j++)
+    for (int j=0;j<filteredImage.height();j++)
         {
              float r = qRed(filteredImage.pixel(i,j));
              float g = qGreen(filteredImage.pixel(i,j));
@@ -237,10 +235,10 @@ void PaintArea::StrechHistogram()
 
              strechedImage.setPixel(i,j, qRgb(r,g,b));
         }
-    }
 
     filteredImage = strechedImage;
-    update();
+    this->filterType = Globals::Strech;
+        update();
 }
 
 
@@ -262,7 +260,7 @@ void PaintArea::ScaleImage(float k)
     int Y = (int)(y * (sy - 1)/2);
 
     for (int i = 0; i < x; ++i)
-        for (int j = 0; j < y; ++j)
+    for (int j = 0; j < y; ++j)
         {
             int newX = (int)((i+X) / sx);
             int newY = (int)((j+Y) / sy);
@@ -275,8 +273,9 @@ void PaintArea::ScaleImage(float k)
         }
 
     filteredImage = scaledImage;
-
-    update();
+    this->scale = k;
+    this->filterType = Globals::Scale;
+        update();
 }
 
 
@@ -284,7 +283,22 @@ void PaintArea::MatrixFilter(double filter[], int size, int factor, int bias)
 {
     filteredImage = getImageUnderRect();
     filteredImage = Filters::MatrixFilter(filteredImage, filter, 3, factor, bias);
-    update();
+    this->matrixFilter = filter;
+    this->filterType = Globals::Matrix;
+        update();
+}
+
+void PaintArea::doFilter()
+{
+    switch (filterType)
+    {
+        case Globals::Scale:
+        ScaleImage(scale); break;
+        case Globals::Rotate:
+        RotateImage(rotation); break;
+        case Globals::Strech:
+        StrechHistogram(); break;
+    }
 }
 
 void PaintArea::paintEvent(QPaintEvent *event)
@@ -295,9 +309,9 @@ void PaintArea::paintEvent(QPaintEvent *event)
     painter->drawImage(0, 0 , bacground);
     painter->drawImage(0, 0, Canvas.GetCanvas());
     painter->drawImage(0, 0, Canvas.DrawShape(currentFigure));
-    painter->drawImage(filterArea->GetRect(), filteredImage);
+    if (currentShape == Globals::Rectangle )
+        painter->drawImage(filterArea->GetRect(), filteredImage);
     painter->drawImage(0, 0, Canvas.DrawShape(filterArea));
-
     painter->end();
     delete painter;
 }

@@ -35,11 +35,16 @@ public:
     void MatrixFilter(double filter[], int size, int factor, int bias);
     void ScaleImage(float k);
     QImage filteredImage;
+    Globals::FilterType filterType = Globals::Scale;
+    int scale = 1;
+    int rotation = 0;
+    double* matrixFilter;
 
 public slots:
     void ClearImage();
 
 protected:
+    void doFilter();
     void paintEvent(QPaintEvent* );
     void mouseMoveEvent(QMouseEvent* );
     void mousePressEvent(QMouseEvent* );
