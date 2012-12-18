@@ -154,6 +154,10 @@ float* MatrixMultiplication(float x[2][2], float y[])
 void PaintArea::RotateImage(int angle)
 {
     qDebug() << angle;
+
+    ScaleImage((angle)/36.0);
+    update();
+            return;
     filteredImage = getImageUnderRect();
 
     int x = filteredImage.width();
@@ -183,7 +187,8 @@ void PaintArea::RotateImage(int angle)
             vector[0] += x0;
             vector[1] += y0;
             if (0 <= vector[0] && vector[0] < x &&
-                    0 <= vector[1] && vector[1] < y &&  filteredImage.pixel((int)vector[0], (int)vector[1]))
+                0 <= vector[1] && vector[1] < y &&
+                filteredImage.pixel((int)vector[0], (int)vector[1]))
                 rotatedImage.setPixel(i, j, filteredImage.pixel((int)vector[0], (int)vector[1]) );
         }
 
@@ -191,6 +196,39 @@ void PaintArea::RotateImage(int angle)
     update();
 }
 
+
+void PaintArea::ScaleImage(float k)
+{
+    qDebug() << k;
+    filteredImage = getImageUnderRect();
+
+    int x = filteredImage.width();
+    int y = filteredImage.height();
+
+    float sx = k >= 0 ? k : 1.0/-k;
+    float sy = k >= 0 ? k : 1.0/-k;
+
+    QImage scaledImage(x, y, QImage::Format_ARGB32);
+    scaledImage.fill(Qt::black);
+
+    int X = (int)(x * (sx - 1)/2);
+    int Y = (int)(y * (sy - 1)/2);
+
+    for (int i = 0; i < x; ++i)
+        for (int j = 0; j < y; ++j)
+        {
+            int newX = (int)((i+X) / sx);
+            int newY = (int)((j+Y) / sy);
+            if (0 <= newX && newX < x - 1 &&
+                0 <= newY && newY < y - 1 &&
+                filteredImage.pixel(newX, newY))
+            {
+                scaledImage.setPixel(i, j, filteredImage.pixel(newX, newY));
+            }
+        }
+
+    filteredImage = scaledImage;
+}
 
 
 void PaintArea::MatrixFilter(double filter[], int size, int factor, int bias)
@@ -208,8 +246,9 @@ void PaintArea::paintEvent(QPaintEvent *event)
     painter->drawImage(0, 0 , bacground);
     painter->drawImage(0, 0, Canvas.GetCanvas());
     painter->drawImage(0, 0, Canvas.DrawShape(currentFigure));
-    painter->drawImage(0, 0, Canvas.DrawShape(filterArea));
     painter->drawImage(filterArea->GetRect(), filteredImage);
+    painter->drawImage(0, 0, Canvas.DrawShape(filterArea));
+
     painter->end();
     delete painter;
 }

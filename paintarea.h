@@ -32,6 +32,7 @@ public:
     QImage getImageUnderRect();
     void RotateImage(int angle);
     void MatrixFilter(double filter[], int size, int factor, int bias);
+    void ScaleImage(float k);
 
 public slots:
     void ClearImage();
