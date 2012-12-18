@@ -393,11 +393,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 }
 
 
-QPixmap ImageHistogram(QImage img)
+void ImageHistogram(QImage img)
 {
+    img.save("histogram.bmp");
     if (!histogramRed)   histogramRed   = new QLabel();
-    if (!histogramBlue)  histogramBlue  = new QLabel();
     if (!histogramGreen) histogramGreen = new QLabel();
+    if (!histogramBlue)  histogramBlue  = new QLabel();
+
     int redCount[256] = {0};
     int greenCount[256] = {0};
     int blueCount[256] = {0};
@@ -425,12 +427,9 @@ QPixmap ImageHistogram(QImage img)
 
     for (int i=0;i<256;i++)
     {
-        redCount[i] *= 256.0;
-        redCount[i] /= maxR;
-        greenCount[i] *= 256.0;
-        greenCount[i] /= maxG;
-        blueCount[i] *= 256.0;
-        blueCount[i] /= maxB;
+        redCount[i] /= maxR/256.0;
+        greenCount[i] /= maxG/256.0;
+        blueCount[i] /= maxB/256.0;
     }
 
     QImage red(256, 256, QImage::Format_ARGB32);
@@ -446,32 +445,32 @@ QPixmap ImageHistogram(QImage img)
         qDebug() << i << redCount[i];
         for (int j=0;j<redCount[i];j++)
         {
-            red.setPixel(i, j, c.rgb());
+            red.setPixel(i, 256-j, c.rgb());
         }
         c = Qt::green;
         for (int j=0;j<greenCount[i];j++)
         {
-            green.setPixel(i, j, c.rgb());
+            green.setPixel(i, 256-j, c.rgb());
         }
         c = Qt::blue;
         for (int j=0;j<blueCount[i];j++)
         {
-            blue.setPixel(i, j, c.rgb());
+            blue.setPixel(i, 256-j, c.rgb());
         }
     }
     qDebug()<<s;
-    histogramRed->setPixmap(QPixmap::fromImage(red));
-    histogramGreen->setPixmap(QPixmap::fromImage(green));
-    histogramBlue->setPixmap(QPixmap::fromImage(blue));
-
-    histogramRed->show();
-    histogramGreen->show();
-    histogramBlue->show();
 
     histogramRed->setGeometry(10, 820, 256, 256);
     histogramBlue->setGeometry(270, 820, 256, 256);
     histogramGreen->setGeometry(530, 820, 256, 256);
 
+    histogramRed->setPixmap(QPixmap::fromImage(red));
+    histogramGreen->setPixmap(QPixmap::fromImage(green));
+    histogramBlue->setPixmap(QPixmap::fromImage(blue));
+
+    histogramRed->show();
+    histogramBlue->show();
+    histogramGreen->show();
 }
 
 void MainWindow::DrawHistogram()
