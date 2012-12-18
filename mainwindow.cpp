@@ -18,14 +18,14 @@ MainWindow::MainWindow(QWidget *parent)
     shapeList.append("StrongCircle");
 
     //Create UI
-    setFixedSize(1010, 1030);
+    setFixedSize(1010, 930);
     setWindowTitle("Grafika Komputerowa");
 
     paintArea = new PaintArea(this);
     paintArea->show();
 
     leftPanelWidget = new QWidget(this);
-    leftPanelWidget->setGeometry(800, 0, 210, 630);
+    leftPanelWidget->setGeometry(800, 0, 210, 730);
     leftPanelLayout = new QVBoxLayout();
     leftPanelWidget->setLayout(leftPanelLayout);
 
@@ -80,8 +80,6 @@ MainWindow::MainWindow(QWidget *parent)
     colorIntensivitySlider->setRange(0, 100);
     leftPanelLayout->addWidget(colorIntensivitySlider);
 
-
-
     colorValueEdit = new QSpinBox*[3];
     for (int i=0;i<3;i++)
     {
@@ -101,6 +99,10 @@ MainWindow::MainWindow(QWidget *parent)
     colorCountSlider->setTickInterval(10);
     leftPanelLayout->addWidget(colorCountSlider);
 
+    angleSlider = new QSlider(Qt::Horizontal, this);
+    angleSlider->setRange(0, 360);
+    leftPanelLayout->addWidget(angleSlider);
+
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
@@ -113,10 +115,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect (colorCountSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeFillTextureColors()));
     connect (colorModelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangePalette()));
     connect (colorIntensivitySlider, SIGNAL(valueChanged(int)), this, SLOT(MoveSlider()));
+    connect (angleSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeAngle()));
 
     setMouseTracking(true);
 }
 
+
+void MainWindow::ChangeAngle()
+{
+    paintArea->RotateImage(angleSlider->value());
+}
 
 QColor Hsv2Rgb(int h, int s, int v)
 {

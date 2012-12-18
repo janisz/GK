@@ -8,6 +8,7 @@
 #include "Graphics/circle.h"
 #include "Graphics/aacircle.h"
 #include "Graphics/rectangle.h"
+#include "Graphics/filters.h"
 #include <cmath>
 
 class PaintArea : public QWidget
@@ -29,6 +30,8 @@ public:
     void SetCurrentFigureAtribiutes();
     void DrawComb(int N);
     QImage getImageUnderRect();
+    void RotateImage(int angle);
+    void MatrixFilter(double filter[], int size, int factor, int bias);
 
 public slots:
     void ClearImage();
@@ -41,6 +44,7 @@ protected:
 
 private:
     Graphics Canvas;
+    QImage filteredImage;
     QImage image;
     QImage bacground;
     QImage texture;

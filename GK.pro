@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     Graphics/colorquantizer.cpp \
     Graphics/circle.cpp \
     Graphics/aacircle.cpp \
-    Graphics/rectangle.cpp
+    Graphics/rectangle.cpp \
+    Graphics/filters.cpp
 
 HEADERS  += mainwindow.h \
     paintarea.h \
@@ -32,4 +33,5 @@ HEADERS  += mainwindow.h \
     Graphics/colorquantizer.h \
     Graphics/circle.h \
     Graphics/aacircle.h \
-    Graphics/rectangle.h
+    Graphics/rectangle.h \
+    Graphics/filters.h

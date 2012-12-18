@@ -30,6 +30,7 @@ private:
     QSpinBox **colorValueEdit;
     QSlider *colorIntensivitySlider;
     QSlider *colorCountSlider;
+    QSlider *angleSlider;
     QStringList shapeList;
     QImage colorMapImage;
     QColor selectedColor;
@@ -61,6 +62,7 @@ public slots:
     void RunTest();
     void ChangePalette();
     void ChangeLineColor();
+    void ChangeAngle();
 };
 
 #endif // MAINWINDOW_H

@@ -19,6 +19,8 @@ PaintArea::PaintArea(QWidget *parent) :
     Canvas.SetCanvas(QImage(800, 600, QImage::Format_ARGB32));
 }
 
+
+
 QImage PaintArea::getImageUnderRect()
 {
     QRect rect =  filterArea->GetRect();
@@ -134,7 +136,69 @@ void PaintArea::mouseMoveEvent(QMouseEvent *event)
     update();
 }
 
+float* MatrixMultiplication(float x[2][2], float y[])
+{
+    int length = 2;
+    float *answer = new float[length];
 
+    for (int i = 0; i < length; ++i)
+        answer[i] = 0;
+
+    for (int i = 0; i < length; ++i)
+        for (int j = 0; j < length; ++j)
+            answer[i] += (float)(x[i][ j] * y[j]);
+
+    return answer;
+}
+
+void PaintArea::RotateImage(int angle)
+{
+    qDebug() << angle;
+    filteredImage = getImageUnderRect();
+
+    int x = filteredImage.width();
+    int y = filteredImage.height();
+
+
+    QImage rotatedImage(x, y, QImage::Format_ARGB32);
+    rotatedImage.fill(Qt::black);
+
+    int x0 =  x / 2;
+    int y0 =  y / 2;
+
+    double an = angle * 2 * M_PI / 360;
+
+    float matrix[2][2] = {{ cos(an), -sin(an)},
+                          { sin(an),  cos(an)}};
+
+    for (int i = 0; i < x ; ++i)
+        for (int j = 0; j < y ; ++j)
+        {
+            float *vector = new float[2];
+            vector[0] = i-x0;
+            vector[1] = j-y0;
+
+            vector = MatrixMultiplication(matrix, vector);
+
+            vector[0] += x0;
+            vector[1] += y0;
+            if (0 <= vector[0] && vector[0] < x &&
+                    0 <= vector[1] && vector[1] < y &&  filteredImage.pixel((int)vector[0], (int)vector[1]))
+                rotatedImage.setPixel(i, j, filteredImage.pixel((int)vector[0], (int)vector[1]) );
+        }
+
+    filteredImage = rotatedImage;
+    update();
+}
+
+
+
+void PaintArea::MatrixFilter(double filter[], int size, int factor, int bias)
+{
+    filteredImage = getImageUnderRect();
+    filteredImage = Filters::MatrixFilter(filteredImage, filter, 3, factor, bias);
+    update();
+}
 
 void PaintArea::paintEvent(QPaintEvent *event)
 {
@@ -145,6 +209,7 @@ void PaintArea::paintEvent(QPaintEvent *event)
     painter->drawImage(0, 0, Canvas.GetCanvas());
     painter->drawImage(0, 0, Canvas.DrawShape(currentFigure));
     painter->drawImage(0, 0, Canvas.DrawShape(filterArea));
+    painter->drawImage(filterArea->GetRect(), filteredImage);
     painter->end();
     delete painter;
 }
@@ -228,7 +293,7 @@ void PaintArea::mouseReleaseEvent(QMouseEvent *event)
     dragShape = false;
     startPoint = QPoint(0,0);
 
-    if (currentFigure->GetType() == Globals::Rectangle)
+    if (currentFigure && currentFigure->GetType() == Globals::Rectangle)
     {
         filterArea = (Rectangle*)currentFigure;
         return;

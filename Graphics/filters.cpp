@@ -5,7 +5,7 @@ Filters::Filters()
 
 }
 
-QImage Filters::MatrixFilter(const QImage& image, double filter[][3], int size, double factor, double bias)
+QImage Filters::MatrixFilter(const QImage& image, double filter[], int size, double factor, double bias)
 {
     int filterWidth = size;
     int filterHeight = size;
@@ -14,6 +14,15 @@ QImage Filters::MatrixFilter(const QImage& image, double filter[][3], int size, 
     int h = image.height();
 
     QImage result = image;
+
+    int K = 0;
+
+    for (int i=0;i<filterWidth;i++)
+        for (int j=0;j<filterHeight;j++)
+        {
+            K += filter[i+j*filterWidth];
+        }
+    K = K > 0 ? K : 1;
 
     for(int x = 0; x < w; x++)
     for(int y = 0; y < h; y++)
@@ -25,15 +34,15 @@ QImage Filters::MatrixFilter(const QImage& image, double filter[][3], int size, 
         {
             int imageX = (x - filterWidth / 2 + filterX + w) % w;
             int imageY = (y - filterHeight / 2 + filterY + h) % h;
-            red += qRed(image.pixel(imageX, imageY)) * filter[filterX][filterY];
-            green += qGreen(image.pixel(imageX, imageY)) * filter[filterX][filterY];
-            blue += qBlue(image.pixel(imageX, imageY)) * filter[filterX][filterY];
+            red += qRed(image.pixel(imageX, imageY)) * filter[filterX +  filterY*filterWidth];
+            green += qGreen(image.pixel(imageX, imageY)) * filter[filterX +  filterY*filterWidth];
+            blue += qBlue(image.pixel(imageX, imageY)) * filter[filterX +  filterY*filterWidth];
         }
 
         int r, g, b;
-        r = std::min(std::max(int(factor * red + bias), 0), 255);
-        g = std::min(std::max(int(factor * green + bias), 0), 255);
-        b = std::min(std::max(int(factor * blue + bias), 0), 255);
+        r = std::min(std::abs(int(factor * red + bias)/K), 255);
+        g = std::min(std::abs(int(factor * green + bias)/K), 255);
+        b = std::min(std::abs(int(factor * blue + bias)/K), 255);
 
         result.setPixel(x, y, qRgb(r, g, b));
     }
@@ -42,79 +51,6 @@ QImage Filters::MatrixFilter(const QImage& image, double filter[][3], int size, 
 
 }
 
-QImage Filters::MatrixFilter(const QImage& image, double filter[][5], int size, double factor, double bias)
-{
-    int filterWidth = size;
-    int filterHeight = size;
-
-    int w = image.width();
-    int h = image.height();
-
-    QImage result = image;
-
-    for(int x = 0; x < w; x++)
-    for(int y = 0; y < h; y++)
-    {
-        double red = 0.0, green = 0.0, blue = 0.0;
-
-        for(int filterX = 0; filterX < filterWidth; filterX++)
-        for(int filterY = 0; filterY < filterHeight; filterY++)
-        {
-            int imageX = (x - filterWidth / 2 + filterX + w) % w;
-            int imageY = (y - filterHeight / 2 + filterY + h) % h;
-            red += qRed(image.pixel(imageX, imageY)) * filter[filterX][filterY];
-            green += qGreen(image.pixel(imageX, imageY)) * filter[filterX][filterY];
-            blue += qBlue(image.pixel(imageX, imageY)) * filter[filterX][filterY];
-        }
-
-        int r, g, b;
-        r = std::min(std::max(int(factor * red + bias), 0), 255);
-        g = std::min(std::max(int(factor * green + bias), 0), 255);
-        b = std::min(std::max(int(factor * blue + bias), 0), 255);
-
-        result.setPixel(x, y, qRgb(r, g, b));
-    }
-
-    return result;
-
-}
-
-QImage Filters::MatrixFilter(const QImage& image, double filter[][7], int size, double factor, double bias)
-{
-    int filterWidth = size;
-    int filterHeight = size;
-
-    int w = image.width();
-    int h = image.height();
-
-    QImage result = image;
-
-    for(int x = 0; x < w; x++)
-    for(int y = 0; y < h; y++)
-    {
-        double red = 0.0, green = 0.0, blue = 0.0;
-
-        for(int filterX = 0; filterX < filterWidth; filterX++)
-        for(int filterY = 0; filterY < filterHeight; filterY++)
-        {
-            int imageX = (x - filterWidth / 2 + filterX + w) % w;
-            int imageY = (y - filterHeight / 2 + filterY + h) % h;
-            red += qRed(image.pixel(imageX, imageY)) * filter[filterX][filterY];
-            green += qGreen(image.pixel(imageX, imageY)) * filter[filterX][filterY];
-            blue += qBlue(image.pixel(imageX, imageY)) * filter[filterX][filterY];
-        }
-
-        int r, g, b;
-        r = std::min(std::max(int(factor * red + bias), 0), 255);
-        g = std::min(std::max(int(factor * green + bias), 0), 255);
-        b = std::min(std::max(int(factor * blue + bias), 0), 255);
-
-        result.setPixel(x, y, qRgb(r, g, b));
-    }
-
-    return result;
-
-}
 
 QImage Filters::blurred(const QImage& image, const QRect& rect, int radius, bool alphaOnly = false)
 {
