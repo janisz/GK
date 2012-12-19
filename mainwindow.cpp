@@ -1,5 +1,10 @@
 #include "mainwindow.h"
 
+QLabel *histogramRed;
+QLabel *histogramBlue;
+QLabel *histogramGreen;
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
@@ -7,20 +12,20 @@ MainWindow::MainWindow(QWidget *parent)
     shapeList.append("Line");
     shapeList.append("Circle");
     shapeList.append("AACircle");
-    shapeList.append("Ellipse");
+    shapeList.append("Rectangle");
     shapeList.append("Polygon");
     shapeList.append("StrongLine");
     shapeList.append("StrongCircle");
 
     //Create UI
-    setFixedSize(1010, 630);
+    setFixedSize(1010, 930);
     setWindowTitle("Grafika Komputerowa");
 
     paintArea = new PaintArea(this);
     paintArea->show();
 
     leftPanelWidget = new QWidget(this);
-    leftPanelWidget->setGeometry(800, 0, 210, 630);
+    leftPanelWidget->setGeometry(800, 0, 210, 730);
     leftPanelLayout = new QVBoxLayout();
     leftPanelWidget->setLayout(leftPanelLayout);
 
@@ -42,9 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
     colorChooseButton = new QPushButton("Line color", this);
     leftPanelLayout->addWidget(colorChooseButton);
 
-//    fillColorChooseButton = new QPushButton("Fill Color", this);
-//    leftPanelLayout->addWidget(fillColorChooseButton);
-
     textureChooseButton = new QPushButton("Texture", this);
     leftPanelLayout->addWidget(textureChooseButton);
 
@@ -55,8 +57,11 @@ MainWindow::MainWindow(QWidget *parent)
     shapeChooserComboBox->addItems(shapeList);
     leftPanelLayout->addWidget(shapeChooserComboBox);
 
-    testButton = new QPushButton("Test",  this);
+    testButton = new QPushButton("Histogram",  this);
     leftPanelLayout->addWidget(testButton);
+
+    strechHistogramButton = new QPushButton("Strech Histogram",  this);
+    leftPanelLayout->addWidget(strechHistogramButton);
 
     newLineButton = new QPushButton("Line", this);
     leftPanelLayout->addWidget(newLineButton);
@@ -78,8 +83,6 @@ MainWindow::MainWindow(QWidget *parent)
     colorIntensivitySlider->setRange(0, 100);
     leftPanelLayout->addWidget(colorIntensivitySlider);
 
-
-
     colorValueEdit = new QSpinBox*[3];
     for (int i=0;i<3;i++)
     {
@@ -99,10 +102,40 @@ MainWindow::MainWindow(QWidget *parent)
     colorCountSlider->setTickInterval(10);
     leftPanelLayout->addWidget(colorCountSlider);
 
+    angleSlider = new QSlider(Qt::Horizontal, this);
+    angleSlider->setRange(0, 360);
+    leftPanelLayout->addWidget(angleSlider);
+
+    scaleSlider = new QSlider(Qt::Horizontal, this);
+    scaleSlider->setRange(0, 20);
+    leftPanelLayout->addWidget(scaleSlider);
+
+    doMatrixFilter = new QPushButton("Matrix Filter", this);
+    leftPanelLayout->addWidget(doMatrixFilter);
+
+    matrixSize = new QSpinBox(this);
+    matrixSize->setMaximum(7);
+    matrixSize->setMinimum(3);
+    matrixSize->setSingleStep(2);
+    leftPanelLayout->addWidget(matrixSize);
+
+    matrix = new QDoubleSpinBox[49];
+    for (int i=0;i<7;i++)
+    for (int j=0;j<7;j++)
+    {
+        matrix[i+7*j].setParent(this);
+        matrix[i+7*j].setMinimum(-10.0);
+        matrix[i+7*j].setGeometry(50+i*80, 650 + j*35, 70, 35);
+    }
+    ChangeMatrixSize();
+
+    gaussianButton = new QPushButton("Gauss Matrix", this);
+    leftPanelLayout->addWidget(gaussianButton);
+
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
-//    connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeColor()));
+    connect (colorChooseButton, SIGNAL(clicked()), this, SLOT(ChangeLineColor()));
     connect (testButton, SIGNAL(clicked()), this, SLOT(RunTest()));
     connect (newLineButton, SIGNAL(clicked()), this, SLOT(NewLine()));
     connect (shapeChooserComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeShape()));
@@ -111,17 +144,77 @@ MainWindow::MainWindow(QWidget *parent)
     connect (colorCountSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeFillTextureColors()));
     connect (colorModelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangePalette()));
     connect (colorIntensivitySlider, SIGNAL(valueChanged(int)), this, SLOT(MoveSlider()));
-
+    connect (angleSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeAngle()));
+    connect (strechHistogramButton, SIGNAL(clicked()), this, SLOT(strechHistogram()));
+    connect (scaleSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeScale()));
+    connect (matrixSize, SIGNAL(valueChanged(int)), this, SLOT(ChangeMatrixSize()));
+    connect (doMatrixFilter, SIGNAL(clicked()), this, SLOT(MatrixFilter()));
+    connect (gaussianButton, SIGNAL(clicked()), this, SLOT(SetGaussMatrix()));
     setMouseTracking(true);
-
-//    Colors::Quantize("/tmp/tux.ppm", 30);
-//    QImage im;
-//    im.load("/tmp/t.ppm");
-//    qDebug() << im.bits();
-//    Colors::Quantize("/tmp/tux.ppm", 3);
-//    Colors::Quantize(im.scanLine(0), im.width(), im.height(), 2);
 }
 
+
+void MainWindow::SetGaussMatrix()
+{
+    double g3[] ={0, 1, 0,
+                  1, 4, 1,
+                  0, 1, 0};
+
+    double g5[] = {0, 1, 2, 1, 0,
+                   1, 4, 8, 4, 1,
+                   2, 8, 16,8, 2,
+                   1, 4, 8, 4, 1,
+                   0, 1, 2, 1, 0};
+
+    double g7[] = {1, 1, 2, 2, 2, 1, 1,
+                   1, 2, 2, 4, 2, 2, 1,
+                   2, 2, 4, 8, 4, 2, 2,
+                   2, 4, 8, 16,8, 4, 2,
+                   2, 2, 4, 8, 4, 2, 2,
+                   1, 2, 2, 4, 2, 2, 1,
+                   1, 1, 2, 2, 2, 1, 1};
+    int s = matrixSize->value();
+    double *p = g7;
+    if (s == 3) p = g3;
+    if (s == 5) p = g5;
+
+    for (int i=0;i<7;i++)
+    for (int j=0;j<7;j++)
+    {
+        if (i < s && j < s)
+            matrix[i+7*j].setValue(p[i+s*j]);
+    }
+}
+
+void MainWindow::ChangeMatrixSize()
+{
+    int s = matrixSize->value();
+    for (int i=0;i<7;i++)
+    for (int j=0;j<7;j++)
+    {
+        matrix[i+7*j].setEnabled(true);
+        if (i >= s || j >= s)
+            matrix[i+7*j].setEnabled(false);
+    }
+}
+
+void MainWindow::MatrixFilter()
+{
+    int s = matrixSize->value();
+    double *f = new double[s*s];
+    for (int i=0;i<7;i++)
+    for (int j=0;j<7;j++)
+    {
+        if (i < s && j < s)
+            f[i+7*j] = matrix[i+7*j].value();
+    }
+    paintArea->MatrixFilter(f, s, 1.0, 0);
+}
+
+void MainWindow::ChangeAngle()
+{
+    paintArea->RotateImage(angleSlider->value());
+}
 
 QColor Hsv2Rgb(int h, int s, int v)
 {
@@ -139,9 +232,6 @@ QColor Xyz2Rgb(int x, int y, int z)
     QColor color;
     float* c = xyz2rgb(x*0.009, y*0.009, z*0.009);
     validColor = (c[0] < 0 || c[1] < 0 || c[2] < 0) || (c[0] > 1 || c[1] > 1|| c[2] > 1);
-//    c[2]= MIN(1.0f,MAX(0.0f,c[2]));
-//    c[0]= MIN(1.0f,MAX(0.0f,c[0]));
-//    c[1]= MIN(1.0f,MAX(0.0f,c[1]));
     if (validColor) c[0] = c[1] = c[2] = 0;
     color.setRgb(c[0]*255.0, c[1]*255.0, c[2]*255.0);
     delete c;
@@ -202,7 +292,7 @@ QImage MainWindow::setPalete(int x)
 
 void MainWindow::RunTest()
 {
-    paintArea->RunTest();
+            DrawHistogram();
 }
 
 void MainWindow::ChangePalette()
@@ -259,6 +349,11 @@ void MainWindow::NewLine()
     y1 = QInputDialog::getInteger(this, "Insert value", "Y1");
 
     paintArea->AddLine(x0, x1, y0, y1);
+}
+
+void MainWindow::ChangeLineColor()
+{
+    paintArea->SetLineColor(QColorDialog::getColor(Qt::red, this ));
 }
 
 void MainWindow::ChangeColor()
@@ -395,7 +490,104 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     event->accept();
 }
 
+
+void ImageHistogram(QImage img)
+{
+    img.save("histogram.bmp");
+    if (!histogramRed)   histogramRed   = new QLabel();
+    if (!histogramGreen) histogramGreen = new QLabel();
+    if (!histogramBlue)  histogramBlue  = new QLabel();
+
+    int redCount[256] = {0};
+    int greenCount[256] = {0};
+    int blueCount[256] = {0};
+
+    int maxR, maxB, maxG;
+    maxR = maxB = maxG = 1;
+
+    for (int i=0;i<img.width();i++)
+    {
+        for (int j=0;j<img.height();j++)
+        {
+            QColor c = img.pixel(i, j);
+            redCount[c.red()]++;
+            greenCount[c.green()]++;
+            blueCount[c.blue()]++;
+        }
+    }
+
+    for (int i=0;i<256;i++)
+    {
+        maxR = MAX(maxR, redCount[i]);
+        maxG = MAX(maxG, greenCount[i]);
+        maxB = MAX(maxB, blueCount[i]);
+    }
+
+    for (int i=0;i<256;i++)
+    {
+        redCount[i] /= maxR/256.0;
+        greenCount[i] /= maxG/256.0;
+        blueCount[i] /= maxB/256.0;
+    }
+
+    QImage red(256, 256, QImage::Format_ARGB32);
+    red.fill(Qt::black);
+    QImage green(256, 256, QImage::Format_ARGB32);
+    green.fill(Qt::black);
+    QImage blue(256, 256, QImage::Format_ARGB32);
+    green.fill(Qt::black);
+    QString s = "";
+    for (int i=0;i<256;i++)
+    {
+        QColor c(255, 0, 0);
+        qDebug() << i << redCount[i];
+        for (int j=0;j<redCount[i];j++)
+        {
+            red.setPixel(i, 256-j, c.rgb());
+        }
+        c = Qt::green;
+        for (int j=0;j<greenCount[i];j++)
+        {
+            green.setPixel(i, 256-j, c.rgb());
+        }
+        c = Qt::blue;
+        for (int j=0;j<blueCount[i];j++)
+        {
+            blue.setPixel(i, 256-j, c.rgb());
+        }
+    }
+    qDebug()<<s;
+
+    histogramRed->setGeometry(10, 820, 256, 256);
+    histogramBlue->setGeometry(270, 820, 256, 256);
+    histogramGreen->setGeometry(530, 820, 256, 256);
+
+    histogramRed->setPixmap(QPixmap::fromImage(red));
+    histogramGreen->setPixmap(QPixmap::fromImage(green));
+    histogramBlue->setPixmap(QPixmap::fromImage(blue));
+
+    histogramRed->show();
+    histogramBlue->show();
+    histogramGreen->show();
+}
+
+void MainWindow::DrawHistogram()
+{
+    QImage img = paintArea->filteredImage;
+    ImageHistogram(img);
+}
+
+void MainWindow::strechHistogram()
+{
+    paintArea->StrechHistogram();
+}
+
+void MainWindow::ChangeScale()
+{
+    paintArea->ScaleImage(scaleSlider->value() - 10);
+}
+
 MainWindow::~MainWindow()
 {
-    
+    delete []matrix;
 }

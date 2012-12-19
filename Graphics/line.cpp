@@ -6,6 +6,16 @@ Line::Line(QPoint begin, QPoint end, QColor color)
     this->end = end;
     this->lineColor = color;
     this->type = Globals::Line;
+    this->Size = 1;
+}
+
+Line::Line(QPoint begin, QPoint end, QColor color, int size)
+{
+    this->begin = begin;
+    this->end = end;
+    this->lineColor = color;
+    this->type = Globals::Line;
+    this->Size = size;
 }
 
 void Line::Move(QPoint pos)
@@ -178,7 +188,9 @@ void Line::Draw(QImage &img)
 
     while (true)
     {
-        img.setPixel(x0,y0, qRgb(lineColor.red(), lineColor.green(), lineColor.blue()));
+        for (int i=0;i<Size;i++)
+            for (int j=0;j<Size;j++)
+                img.setPixel(x0+i,y0+j, qRgb(lineColor.red(), lineColor.green(), lineColor.blue()));
 
         if ((x0 == x1) && (y0 == y1))
                 break;

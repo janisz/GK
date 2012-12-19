@@ -5,7 +5,6 @@
 #include "Globals.h"
 #include "paintarea.h"
 #include "Graphics/colors.h"
-#include "Graphics/octree.h"
 #include "Graphics/colorquantizer.h"
 
 class MainWindow : public QWidget
@@ -22,18 +21,26 @@ private:
     QPushButton *colorChooseButton;
     QPushButton *fillColorChooseButton;
     QPushButton *textureChooseButton;
+    QPushButton *doMatrixFilter;
     QCheckBox *filledCheckBox;
     QPushButton *testButton;
+    QPushButton *strechHistogramButton;
     QPushButton *newLineButton;
+    QPushButton *gaussianButton;
     QComboBox *shapeChooserComboBox;
     QComboBox *colorModelComboBox;
     QLabel *colorMap;
     QSpinBox **colorValueEdit;
     QSlider *colorIntensivitySlider;
     QSlider *colorCountSlider;
+    QSlider *angleSlider;
+    QSlider *scaleSlider;
     QStringList shapeList;
     QImage colorMapImage;
     QColor selectedColor;
+    QSpinBox* matrixSize;
+    QDoubleSpinBox* matrix;
+
 
 protected:
     void mouseMoveEvent(QMouseEvent *);
@@ -43,10 +50,15 @@ protected:
 public:
     MainWindow(QWidget *parent = 0);
     QImage setPalete(int x);
+    void DrawHistogram();
     ~MainWindow();
 
 public slots:
+    void SetGaussMatrix();
     void ChangeColor();
+    void MatrixFilter();
+    void ChangeMatrixSize();
+    void strechHistogram();
     void ChangeFillColor();
     void MoveSlider();
     void ChangeColorSpinBox();
@@ -59,6 +71,9 @@ public slots:
     void ShowGrid();
     void RunTest();
     void ChangePalette();
+    void ChangeLineColor();
+    void ChangeAngle();
+    void ChangeScale();
 };
 
 #endif // MAINWINDOW_H

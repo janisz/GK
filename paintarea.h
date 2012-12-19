@@ -5,6 +5,10 @@
 #include "Globals.h"
 #include "Graphics/graphics.h"
 #include "Graphics/polygon.h"
+#include "Graphics/circle.h"
+#include "Graphics/aacircle.h"
+#include "Graphics/rectangle.h"
+#include "Graphics/filters.h"
 #include <cmath>
 
 class PaintArea : public QWidget
@@ -25,11 +29,23 @@ public:
     void Fill(bool isFilled) {fillShape = isFilled; update();}
     void SetCurrentFigureAtribiutes();
     void DrawComb(int N);
+    QImage getImageUnderRect();
+    void StrechHistogram();
+    void RotateImage(int angle);
+    void MatrixFilter(double filter[], int size, int factor, int bias);
+    void ScaleImage(float k);
+    QImage filteredImage;
+    Globals::FilterType filterType = Globals::Scale;
+    int scale = 1;
+    int rotation = 0;
+    double* matrixFilter = NULL;
+    int matrixFilterSize = 3;
 
 public slots:
     void ClearImage();
 
 protected:
+    void doFilter();
     void paintEvent(QPaintEvent* );
     void mouseMoveEvent(QMouseEvent* );
     void mousePressEvent(QMouseEvent* );
@@ -37,6 +53,7 @@ protected:
 
 private:
     Graphics Canvas;
+
     QImage image;
     QImage bacground;
     QImage texture;
@@ -51,6 +68,7 @@ private:
     QList<QPoint> polygonPoints;
     Globals::ShapeType currentShape;
     Shape* DrawPolygon();
+    Rectangle* filterArea;
     
 };
 

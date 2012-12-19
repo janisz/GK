@@ -11,6 +11,7 @@ class Line : public Shape
 {
 public:
     Line(QPoint begin, QPoint end, QColor lineColor);
+    Line(QPoint begin, QPoint end, QColor lineColor, int size);
     void SetColor(QColor lineColor);
     void Draw(QImage &img);
     void Move(QPoint pos);
@@ -21,6 +22,7 @@ protected:
     void ClipToPolygon(QImage &img) {};
     QPoint begin;
     QPoint end;
+    int Size;
 };
 
 #endif // LINE_H
