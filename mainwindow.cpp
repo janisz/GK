@@ -132,6 +132,11 @@ MainWindow::MainWindow(QWidget *parent)
     gaussianButton = new QPushButton("Gauss Matrix", this);
     leftPanelLayout->addWidget(gaussianButton);
 
+    gamma = new QDoubleSpinBox(this);
+    gamma->setMinimum(0.001);
+    gamma->setMaximum(10.0);
+    leftPanelLayout->addWidget(gamma);
+
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
@@ -150,6 +155,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect (matrixSize, SIGNAL(valueChanged(int)), this, SLOT(ChangeMatrixSize()));
     connect (doMatrixFilter, SIGNAL(clicked()), this, SLOT(MatrixFilter()));
     connect (gaussianButton, SIGNAL(clicked()), this, SLOT(SetGaussMatrix()));
+    connect (gamma, SIGNAL(valueChanged(double)), this, SLOT(GammaCorrection()));
     setMouseTracking(true);
 }
 
@@ -580,6 +586,11 @@ void MainWindow::DrawHistogram()
 void MainWindow::strechHistogram()
 {
     paintArea->StrechHistogram();
+}
+
+void MainWindow::GammaCorrection()
+{
+    paintArea->GammaFilter(gamma->value());
 }
 
 void MainWindow::ChangeScale()

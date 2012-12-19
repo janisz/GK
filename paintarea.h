@@ -34,12 +34,14 @@ public:
     void RotateImage(int angle);
     void MatrixFilter(double filter[], int size, int factor, int bias);
     void ScaleImage(float k);
+    void GammaFilter(double gamma);
     QImage filteredImage;
     Globals::FilterType filterType = Globals::Scale;
     int scale = 1;
     int rotation = 0;
     double* matrixFilter = NULL;
     int matrixFilterSize = 3;
+    double gammaValue = 1.0;
 
 public slots:
     void ClearImage();

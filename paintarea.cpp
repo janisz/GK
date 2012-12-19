@@ -151,6 +151,44 @@ float* MatrixMultiplication(float x[2][2], float y[])
     return answer;
 }
 
+void PaintArea::GammaFilter(double gamma)
+{
+    filteredImage = getImageUnderRect();
+
+    int x = filteredImage.width();
+    int y = filteredImage.height();
+
+    QImage resultImage(x, y, QImage::Format_ARGB32);
+    resultImage.fill(Qt::black);
+
+    qDebug() << gamma;
+
+    for (int i = 0; i < x ; ++i)
+    for (int j = 0; j < y ; ++j)
+    {
+        QRgb color = filteredImage.pixel(i, j);
+        double r = qRed(color)/255.0;
+        double g = qGreen(color)/255.0;
+        double b = qBlue(color)/255.0;
+
+        r = pow(r, gamma);
+        g = pow(g, gamma);
+        b = pow(b, gamma);
+
+        r *= 255.0;
+        g *= 255.0;
+        b *= 255.0;
+
+        resultImage.setPixel(i, j, qRgb((int)r, (int)g, (int)b));
+    }
+
+    filteredImage = resultImage;
+    filterType = Globals::Gamma;
+    gammaValue = gamma;
+    update();
+
+}
+
 void PaintArea::RotateImage(int angle)
 {
     qDebug() << angle;
@@ -301,6 +339,9 @@ void PaintArea::doFilter()
         RotateImage(rotation); break;
         case Globals::Strech:
         StrechHistogram(); break;
+        case Globals::Gamma:
+        GammaFilter(gammaValue);
+        break;
     }
 }
 

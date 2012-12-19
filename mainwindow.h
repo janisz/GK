@@ -40,6 +40,7 @@ private:
     QColor selectedColor;
     QSpinBox* matrixSize;
     QDoubleSpinBox* matrix;
+    QDoubleSpinBox* gamma;
 
 
 protected:
@@ -74,6 +75,7 @@ public slots:
     void ChangeLineColor();
     void ChangeAngle();
     void ChangeScale();
+    void GammaCorrection();
 };
 
 #endif // MAINWINDOW_H

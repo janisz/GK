@@ -19,7 +19,8 @@ enum FilterType
     Scale  = 0,
     Matrix = 1,
     Rotate = 2,
-    Strech = 3
+    Strech = 3,
+    Gamma = 4
 };
 
 }
