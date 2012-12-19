@@ -13,7 +13,6 @@ void Graphics::SetCanvas(QImage canvas)
 QImage Graphics::GetCanvas()
 {
     Repaint();
-    canvas.save("canvas.bmp");
     return (this->canvas);
 }
 

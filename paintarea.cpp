@@ -282,9 +282,12 @@ void PaintArea::ScaleImage(float k)
 void PaintArea::MatrixFilter(double filter[], int size, int factor, int bias)
 {
     filteredImage = getImageUnderRect();
-    filteredImage = Filters::MatrixFilter(filteredImage, filter, 3, factor, bias);
+    filteredImage = Filters::MatrixFilter(filteredImage, filter, size, factor, bias);
+//    if (this->matrixFilter)
+//        delete this->matrixFilter;
     this->matrixFilter = filter;
     this->filterType = Globals::Matrix;
+    this->matrixFilterSize = size;
         update();
 }
 

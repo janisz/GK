@@ -110,6 +110,28 @@ MainWindow::MainWindow(QWidget *parent)
     scaleSlider->setRange(0, 20);
     leftPanelLayout->addWidget(scaleSlider);
 
+    doMatrixFilter = new QPushButton("Matrix Filter", this);
+    leftPanelLayout->addWidget(doMatrixFilter);
+
+    matrixSize = new QSpinBox(this);
+    matrixSize->setMaximum(7);
+    matrixSize->setMinimum(3);
+    matrixSize->setSingleStep(2);
+    leftPanelLayout->addWidget(matrixSize);
+
+    matrix = new QDoubleSpinBox[49];
+    for (int i=0;i<7;i++)
+    for (int j=0;j<7;j++)
+    {
+        matrix[i+7*j].setParent(this);
+        matrix[i+7*j].setMinimum(-10.0);
+        matrix[i+7*j].setGeometry(50+i*80, 650 + j*35, 70, 35);
+    }
+    ChangeMatrixSize();
+
+    gaussianButton = new QPushButton("Gauss Matrix", this);
+    leftPanelLayout->addWidget(gaussianButton);
+
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ShowGrid()));
@@ -125,9 +147,69 @@ MainWindow::MainWindow(QWidget *parent)
     connect (angleSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeAngle()));
     connect (strechHistogramButton, SIGNAL(clicked()), this, SLOT(strechHistogram()));
     connect (scaleSlider, SIGNAL(valueChanged(int)), this, SLOT(ChangeScale()));
+    connect (matrixSize, SIGNAL(valueChanged(int)), this, SLOT(ChangeMatrixSize()));
+    connect (doMatrixFilter, SIGNAL(clicked()), this, SLOT(MatrixFilter()));
+    connect (gaussianButton, SIGNAL(clicked()), this, SLOT(SetGaussMatrix()));
     setMouseTracking(true);
 }
 
+
+void MainWindow::SetGaussMatrix()
+{
+    double g3[] ={0, 1, 0,
+                  1, 4, 1,
+                  0, 1, 0};
+
+    double g5[] = {0, 1, 2, 1, 0,
+                   1, 4, 8, 4, 1,
+                   2, 8, 16,8, 2,
+                   1, 4, 8, 4, 1,
+                   0, 1, 2, 1, 0};
+
+    double g7[] = {1, 1, 2, 2, 2, 1, 1,
+                   1, 2, 2, 4, 2, 2, 1,
+                   2, 2, 4, 8, 4, 2, 2,
+                   2, 4, 8, 16,8, 4, 2,
+                   2, 2, 4, 8, 4, 2, 2,
+                   1, 2, 2, 4, 2, 2, 1,
+                   1, 1, 2, 2, 2, 1, 1};
+    int s = matrixSize->value();
+    double *p = g7;
+    if (s == 3) p = g3;
+    if (s == 5) p = g5;
+
+    for (int i=0;i<7;i++)
+    for (int j=0;j<7;j++)
+    {
+        if (i < s && j < s)
+            matrix[i+7*j].setValue(p[i+s*j]);
+    }
+}
+
+void MainWindow::ChangeMatrixSize()
+{
+    int s = matrixSize->value();
+    for (int i=0;i<7;i++)
+    for (int j=0;j<7;j++)
+    {
+        matrix[i+7*j].setEnabled(true);
+        if (i >= s || j >= s)
+            matrix[i+7*j].setEnabled(false);
+    }
+}
+
+void MainWindow::MatrixFilter()
+{
+    int s = matrixSize->value();
+    double *f = new double[s*s];
+    for (int i=0;i<7;i++)
+    for (int j=0;j<7;j++)
+    {
+        if (i < s && j < s)
+            f[i+7*j] = matrix[i+7*j].value();
+    }
+    paintArea->MatrixFilter(f, s, 1.0, 0);
+}
 
 void MainWindow::ChangeAngle()
 {
@@ -507,5 +589,5 @@ void MainWindow::ChangeScale()
 
 MainWindow::~MainWindow()
 {
-
+    delete []matrix;
 }

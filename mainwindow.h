@@ -21,10 +21,12 @@ private:
     QPushButton *colorChooseButton;
     QPushButton *fillColorChooseButton;
     QPushButton *textureChooseButton;
+    QPushButton *doMatrixFilter;
     QCheckBox *filledCheckBox;
     QPushButton *testButton;
     QPushButton *strechHistogramButton;
     QPushButton *newLineButton;
+    QPushButton *gaussianButton;
     QComboBox *shapeChooserComboBox;
     QComboBox *colorModelComboBox;
     QLabel *colorMap;
@@ -36,6 +38,8 @@ private:
     QStringList shapeList;
     QImage colorMapImage;
     QColor selectedColor;
+    QSpinBox* matrixSize;
+    QDoubleSpinBox* matrix;
 
 
 protected:
@@ -50,7 +54,10 @@ public:
     ~MainWindow();
 
 public slots:
+    void SetGaussMatrix();
     void ChangeColor();
+    void MatrixFilter();
+    void ChangeMatrixSize();
     void strechHistogram();
     void ChangeFillColor();
     void MoveSlider();

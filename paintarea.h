@@ -38,7 +38,8 @@ public:
     Globals::FilterType filterType = Globals::Scale;
     int scale = 1;
     int rotation = 0;
-    double* matrixFilter;
+    double* matrixFilter = NULL;
+    int matrixFilterSize = 3;
 
 public slots:
     void ClearImage();
