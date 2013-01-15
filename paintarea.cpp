@@ -17,9 +17,9 @@ PaintArea::PaintArea(QWidget *parent) :
     texture = QImage(1, 1, QImage::Format_ARGB32);
     Canvas.SetCanvas(QImage(800, 600, QImage::Format_ARGB32));
 
-    Engine en;
-    en.readOff();
-    QList<double*> l = en.Calculate();
+
+    engine.readOff();
+    QList<double*> l = engine.Calculate();
     qDebug() << "Paint";
     foreach (double* point, l)
     {
@@ -30,6 +30,37 @@ PaintArea::PaintArea(QWidget *parent) :
     }
 
 //    DrawComb(100);
+}
+
+void PaintArea::Translate(int x, int y, int z)
+{
+    engine.Move(x/100.0, y/100.0, z/100.0);
+    QList<double*> l = engine.Calculate();
+    Canvas.Clear();
+    foreach (double* point, l)
+    {
+        //qDebug() << point[0] << point[1] << point[2] << point[3];
+        Circle *c = new Circle(QPoint((point[0]/point[3])*100.0+400.0, (point[1]/point[3])*100.0+300.0), 1, lineColor);
+        c->SetColor(lineColor);
+        Canvas.AddShape(c);
+    }
+    update();
+}
+
+void PaintArea::Rotate(int x, int y, int z)
+{
+    qDebug() << x << y << z;
+    engine.Rotate(x*M_PI/180, y*M_PI/180, z*M_PI/180);
+    QList<double*> l = engine.Calculate();
+    Canvas.Clear();
+    foreach (double* point, l)
+    {
+        //qDebug() << point[0] << point[1] << point[2] << point[3];
+        Circle *c = new Circle(QPoint((point[0]/point[3])*100.0+400.0, (point[1]/point[3])*100.0+300.0), 1, lineColor);
+        c->SetColor(lineColor);
+        Canvas.AddShape(c);
+    }
+    update();
 }
 
 bool PaintArea::LoadImage(const QString &fileName)

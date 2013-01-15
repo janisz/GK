@@ -29,6 +29,9 @@ public:
     void Fill(bool isFilled) {fillShape = isFilled; update();}
     void SetCurrentFigureAtribiutes();
     void DrawComb(int N);
+    void Translate(int x, int y, int z);
+    void Rotate(int x, int y, int z);
+    Engine engine;
 
 public slots:
     void ClearImage();

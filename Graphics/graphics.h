@@ -25,6 +25,9 @@ public:
     void SetPixel(const int x, const int y, const QColor color, const int alpha);
     void AddShape(Shape* s);
     void SetShapes(QList<Shape*> s);
+
+    void Clear() { shapeList.clear(); }
+
     QList<Shape*> GetShapes();
     void DeleteLastShape();
 

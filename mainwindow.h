@@ -21,6 +21,12 @@ private:
     QSpinBox *gapSizeSpinBox;
     QCheckBox *filledCheckBox;
     QPushButton *testButton;
+    QSlider *translateX;
+    QSlider *translateY;
+    QSlider *translateZ;
+    QSlider *rotateX;
+    QSlider *rotateY;
+    QSlider *rotateZ;
 
 
 protected:
@@ -34,6 +40,8 @@ public:
 
 public slots:
     void SetFill();
+    void Rotate();
+    void Translate();
 };
 
 #endif // MAINWINDOW_H

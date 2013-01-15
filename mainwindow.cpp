@@ -23,13 +23,65 @@ MainWindow::MainWindow(QWidget *parent)
     paintArea = new PaintArea(this);
     paintArea->show();
 
-    connect (filledCheckBox, SIGNAL(clicked()), this, SLOT(SetFill()));
+    QLabel *translateLabel = new QLabel("Translate");
+    leftPanelLayout->addWidget(translateLabel);
 
+    translateX = new QSlider(Qt::Horizontal);
+    translateX->setMaximum(400);
+    translateX->setMinimum(-400);
+    leftPanelLayout->addWidget(translateX);
+
+    translateY = new QSlider(Qt::Horizontal);
+    translateY->setMaximum(400);
+    translateY->setMinimum(-400);
+    leftPanelLayout->addWidget(translateY);
+
+    translateZ = new QSlider(Qt::Horizontal);
+    translateZ->setMaximum(400);
+    translateZ->setMinimum(-400);
+    leftPanelLayout->addWidget(translateZ);
+
+    QLabel *rotateLabel = new QLabel("Rotate");
+    leftPanelLayout->addWidget(rotateLabel);
+
+    rotateX = new QSlider(Qt::Horizontal);
+    rotateX->setMaximum(360);
+    rotateX->setMinimum(0);
+    leftPanelLayout->addWidget(rotateX);
+
+    rotateY = new QSlider(Qt::Horizontal);
+    rotateY->setMaximum(360);
+    rotateY->setMinimum(0);
+    leftPanelLayout->addWidget(rotateY);
+
+    rotateZ = new QSlider(Qt::Horizontal);
+    rotateZ->setMaximum(360);
+    rotateZ->setMinimum(0);
+    leftPanelLayout->addWidget(rotateZ);
+
+    connect (filledCheckBox, SIGNAL(clicked()), this, SLOT(SetFill()));
+    connect (translateX, SIGNAL(sliderMoved(int)), this, SLOT(Translate()));
+    connect (translateY, SIGNAL(sliderMoved(int)), this, SLOT(Translate()));
+    connect (translateZ, SIGNAL(sliderMoved(int)), this, SLOT(Translate()));
+
+    connect (rotateX, SIGNAL(sliderMoved(int)), this, SLOT(Rotate()));
+    connect (rotateY, SIGNAL(sliderMoved(int)), this, SLOT(Rotate()));
+    connect (rotateZ, SIGNAL(sliderMoved(int)), this, SLOT(Rotate()));
 
     setMouseTracking(true);
 
 }
 
+
+void MainWindow::Translate()
+{
+    paintArea->Translate(translateX->value(), translateY->value(), translateZ->value());
+}
+
+void MainWindow::Rotate()
+{
+    paintArea->Rotate(rotateX->value(), rotateY->value(), rotateZ->value());
+}
 
 void MainWindow::SetFill()
 {
