@@ -25,7 +25,7 @@ double* Engine::MatrixMul(double* matrixA, double* matrixB, int Bsize)
 
 void Engine::readOff()
 {
-    QString fileName = "/home/janisz/Downloads/teapot.off"; //QFileDialog::getOpenFileName();
+    QString fileName = "/home/janisz/Downloads/cube.off"; //QFileDialog::getOpenFileName();
     QFile file(fileName);
 
     if(!file.open(QIODevice::ReadOnly)) {
@@ -37,7 +37,7 @@ void Engine::readOff()
     qDebug() << line;
     line = in.readLine();
     QStringList fields = line.split(" ");
-    qDebug() << fields;
+  //  qDebug() << fields;
     int vertexs = fields[0].toInt();
     int faces = fields[1].toInt();
 
@@ -51,9 +51,9 @@ void Engine::readOff()
         fields = line.split(" ");
         double* d = new double[4];
         d[0] = fields[0].toDouble(); d[1] = fields[1].toDouble(); d[2] = fields[2].toDouble(); d[3] = 1.0;
-        qDebug() << d[0] << d[1] << d[2] << d[3];
+   //     qDebug() << d[0] << d[1] << d[2] << d[3];
         vertexsList.append(d);
-        qDebug() << fields;
+   //     qDebug() << fields;
     }
 
 
@@ -63,9 +63,9 @@ void Engine::readOff()
         fields = line.split(" ");
         int* d = new int[3];
         d[0] = fields[2].toInt(); d[1] = fields[3].toInt(); d[2] = fields[4].toInt();
-        qDebug() << d[0] << d[1] << d[2];
+  //      qDebug() << d[0] << d[1] << d[2];
         facesList[i] = d;
-        qDebug() << fields;
+ //       qDebug() << fields;
     }
 
     file.close();

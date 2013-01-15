@@ -19,6 +19,7 @@ public:
     QRect GetRect();
     int isConvex();
     bool isFinish = false;
+    static double zBuffer[800][600];
 protected:
     QList<QPoint> vertexs;
     void ClipToPolygon(QImage &img);

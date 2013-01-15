@@ -92,16 +92,44 @@ template <typename T> int sgn(T val) {
     return (T(0) <= val) - (val < T(0));
 }
 
+float countNormals(float point11, float point12, float point13,
+                   float point21, float point22, float point23,
+                   float point31, float point32, float point33)
+{
+float Normal[3];
+float Vector1[3];
+float Vector2[3];
+
+// wyznaczanie wektorow....
+Vector1[0]= point11-point21;
+Vector1[1]= point12-point22;
+Vector1[2]= point13-point23;
+
+Vector2[0]= point21-point31;
+Vector2[1]= point22-point32;
+Vector2[2]= point23-point33;
+
+//wyznaczanie normalnych....
+Normal[0]=Vector1[1]*Vector2[2]- Vector1[2]*Vector2[1];
+Normal[1]=Vector1[2]*Vector2[0]- Vector1[0]*Vector2[2];
+Normal[2]=Vector1[0]*Vector2[1]- Vector1[1]*Vector2[0];
+
+return Normal[2];
+}
+
 
 void PaintArea::paintEvent(QPaintEvent *event)
 {
     SetCurrentFigureAtribiutes();
     Canvas.Clear();
     QList<double*> l = engine.Calculate();
+    int orientation[engine.FacesCount];
     foreach (double* point, l)
     {
         point[0] = (point[0]/point[3])*100.0+400.0;
         point[1] = (point[1]/point[3])*100.0+300.0;
+        point[2] = (point[2]/point[3])*100.0+300.0;
+
     }
         for (int i=0;i<engine.FacesCount;i++)
         {
@@ -113,7 +141,11 @@ void PaintArea::paintEvent(QPaintEvent *event)
             c->AddVertex(v1);
             c->AddVertex(v2);
             c->AddVertex(v3);
-            c->SetColor(lineColor);
+            c->SetColor(Qt::white);
+            QImage col = QImage(5,5, QImage::Format_ARGB32);
+            col.fill(QColor::fromHsv(qrand() % 256, 255, 190));
+            c->SetTexture(col);
+            c->isFilled = fillShape;
             Canvas.AddShape(c);
         }
     QPainter painter;

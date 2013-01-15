@@ -27,8 +27,9 @@ MainWindow::MainWindow(QWidget *parent)
     leftPanelLayout->addWidget(translateLabel);
 
     translateX = new QSlider(Qt::Horizontal);
-    translateX->setMaximum(400);
-    translateX->setMinimum(-400);
+    translateX->setMaximum(50);
+    translateX->setMinimum(-700);
+
     leftPanelLayout->addWidget(translateX);
 
     translateY = new QSlider(Qt::Horizontal);
@@ -37,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     leftPanelLayout->addWidget(translateY);
 
     translateZ = new QSlider(Qt::Horizontal);
-    translateZ->setMaximum(400);
+    translateZ->setMaximum(400);   
     translateZ->setMinimum(-400);
     leftPanelLayout->addWidget(translateZ);
 
@@ -67,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect (rotateX, SIGNAL(sliderMoved(int)), this, SLOT(Rotate()));
     connect (rotateY, SIGNAL(sliderMoved(int)), this, SLOT(Rotate()));
     connect (rotateZ, SIGNAL(sliderMoved(int)), this, SLOT(Rotate()));
+
+    translateX->setValue(-400);
 
     setMouseTracking(true);
 
