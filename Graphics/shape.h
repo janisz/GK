@@ -34,7 +34,7 @@ public:
     bool isFilled;
 protected:
     QColor lineColor;
-    QImage texture;
+    QImage texture = QImage(1, 1, QImage::Format_Mono);
     Globals::ShapeType type;
 };
 

@@ -75,10 +75,8 @@ QList<double*> Engine::Calculate()
 {
     qDebug() << "Calculate";
     QList<double*> ret;
-    Move(-0.5, -0.5, 0);
-    double *rotation = MatrixMul(MatrixMul(MatrixMul(rotationY, rotationZ), rotationX), translationMatrix);
-    Move(-0.5, -0.5, 0);
-    double *translation = MatrixMul(translationMatrix, rotation);
+    double *rotation = MatrixMul(translationMatrix, MatrixMul(MatrixMul(rotationY, rotationZ), rotationX));
+    double *translation = rotation;//MatrixMul(translationMatrix, rotation);
     double *res = MatrixMul(projectionMatrix, MatrixMul(viewMatrix, translation));
     foreach (double* point, vertexsList)
     {
