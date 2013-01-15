@@ -16,9 +16,6 @@ MainWindow::MainWindow(QWidget *parent)
     setFixedSize(1010, 630);
     setWindowTitle("Grafika Komputerowa");
 
-    paintArea = new PaintArea(this);
-    paintArea->show();
-
     leftPanelWidget = new QWidget(this);
     leftPanelWidget->setGeometry(800, 0, 210, 630);
     leftPanelLayout = new QVBoxLayout();
@@ -80,6 +77,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
+
     colorValueEdit = new QSpinBox*[3];
     for (int i=0;i<3;i++)
     {
@@ -98,6 +96,9 @@ MainWindow::MainWindow(QWidget *parent)
     colorCountSlider->setRange(2, 512);
     colorCountSlider->setTickInterval(10);
     leftPanelLayout->addWidget(colorCountSlider);
+
+    paintArea = new PaintArea(this);
+    paintArea->show();
 
     connect (showGridCheckBox, SIGNAL(clicked()), this, SLOT(ShowGrid()));
     connect (gapSizeSpinBox, SIGNAL(editingFinished()), this, SLOT(ShowGrid()));

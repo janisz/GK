@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     Graphics/colorquantizer.cpp \
     Graphics/circle.cpp \
     Graphics/aacircle.cpp \
-    Graphics/rectangle.cpp
+    Graphics/rectangle.cpp \
+    engine.cpp
 
 HEADERS  += mainwindow.h \
     paintarea.h \
@@ -34,4 +35,5 @@ HEADERS  += mainwindow.h \
     Graphics/colorquantizer.h \
     Graphics/circle.h \
     Graphics/aacircle.h \
-    Graphics/rectangle.h
+    Graphics/rectangle.h \
+    engine.h

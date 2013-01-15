@@ -16,6 +16,19 @@ PaintArea::PaintArea(QWidget *parent) :
     currentFigure = 0;
     texture = QImage(1, 1, QImage::Format_ARGB32);
     Canvas.SetCanvas(QImage(800, 600, QImage::Format_ARGB32));
+
+    Engine en;
+    en.readOff();
+    QList<double*> l = en.Calculate();
+    qDebug() << "Paint";
+    foreach (double* point, l)
+    {
+        //qDebug() << point[0] << point[1] << point[2] << point[3];
+        Circle *c = new Circle(QPoint((point[0]/point[3])*100+400, (point[1]/point[3])*100+300), 1, lineColor);
+        c->SetColor(lineColor);
+        Canvas.AddShape(c);
+    }
+
 //    DrawComb(100);
 }
 

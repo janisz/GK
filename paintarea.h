@@ -9,6 +9,7 @@
 #include "Graphics/aacircle.h"
 #include "Graphics/rectangle.h"
 #include <cmath>
+#include <engine.h>
 
 class PaintArea : public QWidget
 {
