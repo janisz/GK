@@ -8,7 +8,6 @@ Engine::Engine()
 double* Engine::MatrixMul(double* matrixA, double* matrixB, int Bsize)
 {
     double* result = new double[4*Bsize];
-    qDebug() << "Multiply";
     for(int i=0; i<4; i++)
     {
         for(int j=0; j<Bsize; j++)
@@ -20,7 +19,6 @@ double* Engine::MatrixMul(double* matrixA, double* matrixB, int Bsize)
                 }
 
         }
-      //  qDebug() << result[i*4] << result[i*4+1] << result[i*4+2] << result[i*4+3];
     }
     return result;
 }
@@ -36,6 +34,7 @@ void Engine::readOff()
 
     QTextStream in(&file);
     QString line = in.readLine();
+    qDebug() << line;
     line = in.readLine();
     QStringList fields = line.split(" ");
     qDebug() << fields;
@@ -64,14 +63,12 @@ QList<double*> Engine::Calculate()
 {
     qDebug() << "Calculate";
     QList<double*> ret;
- //   double *res = MatrixMul(viewMatrix, projectionMatrix);
+    double *res = MatrixMul(projectionMatrix, viewMatrix);
     foreach (double* point, vertexsList)
     {
-        double* p = MatrixMul(viewMatrix, point, 1);
-        double* p1 = MatrixMul(projectionMatrix, p, 1);
+        double* p1 = MatrixMul(res, point, 1);
 
         ret.append(p1);
- //       qDebug() << p[0] << p[1] << p[2] << p[3];
     }
 
     return ret;

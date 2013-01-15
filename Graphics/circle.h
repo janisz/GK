@@ -7,7 +7,7 @@ class Circle : public Shape
 {
 public:
     Circle() {}
-    Circle(QPoint pos, int r, QColor c) { Centre = pos; Radius = r; lineColor = c; qDebug() << "Create Circle";}
+    Circle(QPoint pos, int r, QColor c) { Centre = pos; Radius = r; lineColor = c;}
     QRect GetRect() { return QRect( Centre.x() - Radius, Centre.y() - Radius, Radius, Radius); }
     void Draw(QImage &img);
     void Move(QPoint pos) { Centre += pos; }

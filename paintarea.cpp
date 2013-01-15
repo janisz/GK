@@ -24,31 +24,12 @@ PaintArea::PaintArea(QWidget *parent) :
     foreach (double* point, l)
     {
         //qDebug() << point[0] << point[1] << point[2] << point[3];
-        Circle *c = new Circle(QPoint((point[0]/point[3])*100+400, (point[1]/point[3])*100+300), 1, lineColor);
+        Circle *c = new Circle(QPoint((point[0]/point[3])*100.0+400.0, (point[1]/point[3])*100.0+300.0), 1, lineColor);
         c->SetColor(lineColor);
         Canvas.AddShape(c);
     }
 
 //    DrawComb(100);
-}
-
-void PaintArea::DrawComb(int N)
-{
-    Polygon *comb = new Polygon();
-    comb->AddVertex(QPoint(5*N, 5));
-    comb->AddVertex(QPoint(5*N, 0));
-    comb->AddVertex(QPoint(0, 0));
-    comb->AddVertex(QPoint(0, 5));
-    for (int i=0;i<N;i++)
-    {
-        comb->AddVertex(QPoint(i*5+2, (N-i+1)*5));
-        comb->AddVertex(QPoint(i*5+5, 5));
-    }
-    comb->SetColor(lineColor);
-    comb->SetTexture(texture);
-    comb->isFilled = fillShape;
-    Canvas.AddShape(comb);
-
 }
 
 bool PaintArea::LoadImage(const QString &fileName)
@@ -98,45 +79,6 @@ template <typename T> int sgn(T val) {
     return (T(0) <= val) - (val < T(0));
 }
 
-void PaintArea::mouseMoveEvent(QMouseEvent *event)
-{
-    event->ignore();
-    static QPoint mousePos;
-    if (dragShape)
-    {
-        if (currentFigure)
-            currentFigure->Move(event->pos() - mousePos);
-        update();
-    }
-    mousePos = event->pos();
-
-    if (startPoint == QPoint(0,0))
-        return;
-
-    QPoint e = event->pos()-startPoint;
-    int r = std::sqrt(e.x()*e.x()+e.y()*e.y()) * std::sqrt(2) / 4;
-    switch (currentShape)
-    {
-        case Globals::Line:
-        currentFigure = new Line(startPoint, event->pos(), lineColor);
-        break;
-        case Globals::StrongLine:
-        currentFigure = new Line(startPoint, event->pos(), lineColor, 5);
-        break;
-        case Globals::Circle:
-        currentFigure = new Circle(QPoint(startPoint.x()+r*sgn(e.x()), startPoint.y()+r*sgn(e.y())), std::abs(r), lineColor);
-        break;
-        case Globals::AACircle:
-        currentFigure = new AACircle(QPoint(startPoint.x()+r*sgn(e.x()), startPoint.y()+r*sgn(e.y())), std::abs(r), lineColor);
-        break;
-        case Globals::Rectangle:
-        currentFigure = new Rectangle(QRect(startPoint, mousePos));
-        break;
-    }
-    update();
-}
-
-
 
 void PaintArea::paintEvent(QPaintEvent *event)
 {
@@ -149,58 +91,7 @@ void PaintArea::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
-void PaintArea::mousePressEvent(QMouseEvent *event)
-{
-    drawPolygon = (currentShape == Globals::Polygon);
-    switch (event->button())
-    {
-        case Qt::LeftButton:
-        {
-            if ((!currentFigure ||
-                 currentFigure->GetType() != Globals::Polygon || ((Polygon*)currentFigure)->isFinish) && drawPolygon)
-            {
-                currentFigure = new Polygon();
-                currentFigure->SetColor(lineColor);
-            }           
-            if (drawPolygon && currentFigure && currentFigure->GetType() == Globals::Polygon && !((Polygon*)currentFigure)->isFinish )
-            {
-                ((Polygon*)currentFigure)->AddVertex(event->pos());
-            }
-            startPoint = event->pos();
-        }
-        break;
-        case Qt::RightButton:
-        {
-            if (drawPolygon && currentFigure->GetType() == Globals::Polygon)
-            {
-                qDebug() << "Convex: " << ((Polygon*)currentFigure)->isConvex();
-                drawPolygon = false;
-                ((Polygon*)currentFigure)->isFinish = true;
-                return;
-            }
-            if (Canvas.GetShapes().isEmpty())
-                return;
-            currentFigure = Canvas.GetShapeAt(event->pos());
-            dragShape = true;
-            update();
-        }
-        break;
-        case Qt::MiddleButton:
-        {
-            if (currentFigure &&
-                currentFigure->GetType() == Globals::Polygon &&
-                ((Polygon*)currentFigure)->isConvex())
-            {
-                Polygon::ClippingPolygon = ((Polygon*)currentFigure);
-                return;
-            }
-            delete currentFigure;
-            currentFigure = NULL;
-            update();
-        }
-    }
 
-}
 
 void PaintArea::SetCurrentFigureAtribiutes()
 {
@@ -219,16 +110,7 @@ void PaintArea::SetCurrentFigureAtribiutes()
     }
 }
 
-void PaintArea::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (drawPolygon)
-        return;
-    if (currentFigure)
-        Canvas.AddShape(currentFigure);
-//    currentFigure = NULL;
-    dragShape = false;
-    startPoint = QPoint(0,0);
-}
+
 
 void PaintArea::AddLine(const int x0, const int x1, const int y0, const int y1)
 {

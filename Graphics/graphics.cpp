@@ -273,7 +273,6 @@ QImage Graphics::DrawGrid(const int gap)
 
 void Graphics::AddShape(Shape *s)
 {
-    qDebug() << "Add shape to list" << s;
     shapeList.append(s);
 }
 
