@@ -19,26 +19,13 @@ private:
     QStatusBar *statusBar;
     QCheckBox *showGridCheckBox;
     QSpinBox *gapSizeSpinBox;
-    QPushButton *colorChooseButton;
-    QPushButton *fillColorChooseButton;
-    QPushButton *textureChooseButton;
     QCheckBox *filledCheckBox;
     QPushButton *testButton;
-    QPushButton *newLineButton;
-    QComboBox *shapeChooserComboBox;
-    QComboBox *colorModelComboBox;
-    QLabel *colorMap;
-    QSpinBox **colorValueEdit;
-    QSlider *colorIntensivitySlider;
-    QSlider *colorCountSlider;
-    QStringList shapeList;
-    QImage colorMapImage;
-    QColor selectedColor;
+
 
 protected:
     void mouseMoveEvent(QMouseEvent *);
     void moveEvent(QMoveEvent *);
-    void mousePressEvent(QMouseEvent *);
 
 public:
     MainWindow(QWidget *parent = 0);
@@ -46,20 +33,7 @@ public:
     ~MainWindow();
 
 public slots:
-    void ChangeColor();
-    void ChangeFillColor();
-    void MoveSlider();
-    void ChangeColorSpinBox();
-    void ClickOnColorLabel();
-    void ChangeFillTexture();
-    void ChangeFillTextureColors();
     void SetFill();
-    void ChangeShape();
-    void NewLine();
-    void ShowGrid();
-    void RunTest();
-    void ChangePalette();
-    void ChangeLineColor();
 };
 
 #endif // MAINWINDOW_H
