@@ -36,14 +36,19 @@ void PaintArea::Translate(int x, int y, int z)
 {
     engine.Move(x/100.0, y/100.0, z/100.0);
     QList<double*> l = engine.Calculate();
-    Canvas.Clear();
-    foreach (double* point, l)
-    {
-        //qDebug() << point[0] << point[1] << point[2] << point[3];
-        Circle *c = new Circle(QPoint((point[0]/point[3])*100.0+400.0, (point[1]/point[3])*100.0+300.0), 1, lineColor);
-        c->SetColor(lineColor);
-        Canvas.AddShape(c);
-    }
+        for (int i=0;i<engine.FacesCount;i++)
+        {
+            qDebug() << engine.facesList[i][0] << engine.facesList[i][1] << engine.facesList[i][2];
+//            QPoint v1(l[engine.facesList[i][0]][0], l[engine.facesList[i][0]][1]);
+//            QPoint v2(l[engine.facesList[i][1]][0], l[engine.facesList[i][1]][1]);
+//            QPoint v3(l[engine.facesList[i][2]][0], l[engine.facesList[i][2]][1]);
+//            Polygon *c = new Polygon();
+//            c->AddVertex(v1);
+//            c->AddVertex(v2);
+//            c->AddVertex(v3);
+//            c->SetColor(lineColor);
+//            Canvas.AddShape(c);
+        }
     update();
 }
 

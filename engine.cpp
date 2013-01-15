@@ -43,7 +43,7 @@ void Engine::readOff()
 
     VertexCount = vertexs;
     FacesCount = faces;
-    facesList = new int*[VertexCount];
+    facesList = new int*[FacesCount];
 
     for (int i=0;i<vertexs;i++) {
 
@@ -56,13 +56,16 @@ void Engine::readOff()
         qDebug() << fields;
     }
 
-    double *pom = new double[3];
-    pom[0] = pom[1] = pom[2] = 0;
-    vertexsList.append(pom);
 
-    for (int i=0;i<vertexs;i++) {
-        double* d = vertexsList[i];
-        qDebug() << d[0] << d[1] << d[2] << d[3];
+    for (int i=0;i<FacesCount;i++) {
+
+        line = in.readLine();
+        fields = line.split(" ");
+        int* d = new int[3];
+        d[0] = fields[2].toInt(); d[1] = fields[3].toInt(); d[2] = fields[4].toInt();
+        qDebug() << d[0] << d[1] << d[2];
+        facesList[i] = d;
+        qDebug() << fields;
     }
 
     file.close();
