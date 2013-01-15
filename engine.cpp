@@ -40,6 +40,11 @@ void Engine::readOff()
     qDebug() << fields;
     int vertexs = fields[0].toInt();
     int faces = fields[1].toInt();
+
+    VertexCount = vertexs;
+    FacesCount = faces;
+    facesList = new int*[VertexCount];
+
     for (int i=0;i<vertexs;i++) {
 
         line = in.readLine();

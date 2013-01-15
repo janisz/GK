@@ -83,6 +83,9 @@ public:
     }
 
     QList<double*> vertexsList;
+    int **facesList;
+    int FacesCount;
+    int VertexCount;
 
     void readOff();
     QList<double*> Calculate();
