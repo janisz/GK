@@ -25,7 +25,7 @@ double* Engine::MatrixMul(double* matrixA, double* matrixB, int Bsize)
 
 void Engine::readOff()
 {
-    QString fileName = "/home/janisz/Downloads/teapot.off"; //QFileDialog::getOpenFileName();
+    QString fileName = "/home/samba/janiszewskit/workspace/GK/teapot.off"; //QFileDialog::getOpenFileName();
     QFile file(fileName);
 
     if(!file.open(QIODevice::ReadOnly)) {

@@ -100,7 +100,7 @@ double* countNormals(float point11, float point12, float point13,
 float Vector1[3];
 float Vector2[3];
 
-// wyznaczanie wektorow....
+
 Vector1[0]= point11-point21;
 Vector1[1]= point12-point22;
 Vector1[2]= point13-point23;
@@ -109,7 +109,7 @@ Vector2[0]= point21-point31;
 Vector2[1]= point22-point32;
 Vector2[2]= point23-point33;
 
-//wyznaczanie normalnych....
+
 Normal[0]=Vector1[1]*Vector2[2]- Vector1[2]*Vector2[1];
 Normal[1]=Vector1[2]*Vector2[0]- Vector1[0]*Vector2[2];
 Normal[2]=Vector1[0]*Vector2[1]- Vector1[1]*Vector2[0];
@@ -144,9 +144,9 @@ void PaintArea::paintEvent(QPaintEvent *event)
         for (int i=0;i<engine.FacesCount;i++)
         {
             //back face culling
-            double* N = countNormals(l[engine.facesList[i][0]][0], l[engine.facesList[i][0]][1], l[engine.facesList[i][0]][1],
-                                    l[engine.facesList[i][1]][0], l[engine.facesList[i][1]][1], l[engine.facesList[i][1]][1],
-                                    l[engine.facesList[i][2]][0], l[engine.facesList[i][2]][1], l[engine.facesList[i][2]][1]);
+            double* N = countNormals(l[engine.facesList[i][0]][0], l[engine.facesList[i][0]][1], l[engine.facesList[i][0]][2],
+                                    l[engine.facesList[i][1]][0], l[engine.facesList[i][1]][1], l[engine.facesList[i][1]][2],
+                                    l[engine.facesList[i][2]][0], l[engine.facesList[i][2]][1], l[engine.facesList[i][2]][2]);
             double cameraTarget[3] = {-l[engine.facesList[i][0]][0],
                                       -l[engine.facesList[i][0]][1],
                                       1000-l[engine.facesList[i][0]][2]};
@@ -155,7 +155,9 @@ void PaintArea::paintEvent(QPaintEvent *event)
                 delete N;
                 continue;
             }
-            delete N;
+
+
+
 
             if (l[engine.facesList[i][0]][2] < 10 || l[engine.facesList[i][1]][2] < 10 || l[engine.facesList[i][2]][2] < 10)
                 continue;
@@ -169,10 +171,26 @@ void PaintArea::paintEvent(QPaintEvent *event)
             c->AddVertex(v3, l[engine.facesList[i][2]][2]);
             c->SetColor(Qt::white);
             QImage col = QImage(5,5, QImage::Format_ARGB32);
-            col.fill(QColor::fromHsv(qrand() % 256, 255, (190 * sin/100000 > 220 ? 240 : 190 * sin/100000 + 20)));
+            col.fill(QColor::fromHsv(i % 256, 255, (190 * sin/100000 > 220 ? 240 : 190 * sin/100000 + 20)));
             c->SetTexture(col);
             c->isFilled = fillShape;
             Canvas.AddShape(c);
+
+            if (engine.drawNormals)
+            {
+                double length = sqrt((N[0] * N[0]) + (N[1] * N[1]) + (N[2] * N[2]));
+                QPoint point = (v1 + v2 + v3)/3;
+                N[0] /= length;
+                N[1] /= length;
+                N[2] /= length;
+
+
+                Shape* line = new Line(point, point - QPoint(N[0]*10.0, N[1]*10.0), Qt::white);
+                Canvas.AddShape(line);
+
+            }
+            delete N;
+
         }
     QPainter painter;
     painter.begin(this);

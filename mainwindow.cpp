@@ -69,6 +69,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect (rotateY, SIGNAL(sliderMoved(int)), this, SLOT(Rotate()));
     connect (rotateZ, SIGNAL(sliderMoved(int)), this, SLOT(Rotate()));
 
+
+
     setMouseTracking(true);
 
 }

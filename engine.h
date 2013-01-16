@@ -14,6 +14,8 @@ class Engine
 public:
     Engine();
 
+    bool drawNormals = true;
+
     static double *currentMatrix;
 
     double viewMatrix[16] = { 1,	0,	0,	0,
