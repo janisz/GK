@@ -25,7 +25,7 @@ double* Engine::MatrixMul(double* matrixA, double* matrixB, int Bsize)
 
 void Engine::readOff()
 {
-    QString fileName = "/home/janisz/Downloads/cube.off"; //QFileDialog::getOpenFileName();
+    QString fileName = "/home/janisz/Downloads/teapot.off"; //QFileDialog::getOpenFileName();
     QFile file(fileName);
 
     if(!file.open(QIODevice::ReadOnly)) {
@@ -75,12 +75,12 @@ QList<double*> Engine::Calculate()
 {
     qDebug() << "Calculate";
     QList<double*> ret;
-    double *rotation = MatrixMul(translationMatrix, MatrixMul(MatrixMul(rotationY, rotationZ), rotationX));
-    double *translation = rotation;//MatrixMul(translationMatrix, rotation);
-    double *res = MatrixMul(projectionMatrix, MatrixMul(viewMatrix, translation));
+    double *rotation = MatrixMul(MatrixMul(rotationY, rotationZ), rotationX);
+    double *translation = MatrixMul(translationMatrix, rotation);
+    double *res = MatrixMul(viewMatrix, translation);
     foreach (double* point, vertexsList)
     {
-        double* p1 = MatrixMul(res, point, 1);
+        double* p1 = MatrixMul(MatrixMul(projectionMatrix, res), point, 1);
 
         ret.append(p1);
     }

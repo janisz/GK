@@ -14,16 +14,18 @@ class Engine
 public:
     Engine();
 
-    double viewMatrix[16] = { 0,	1,	0,	-0.5,
-                              0,	0,	1,	-0.5,
-                              1,	0,	0,	-3,
-                              0,	0,	0,	 1};
-    double projectionMatrix[16] = {1.4281480067,	0,	0,	0,
-                                    0,	1.4281480067,	0,	0,
-                                    0,	0,	-3,	-200,
-                                    0,	0,             -1,  0};
+    double viewMatrix[16] = { 1,	0,	0,	0,
+                              0,	1,	0,	0,
+                              0,	0,	1,	-10,
+                              0,	0,	0,	1};
 
-    double translationMatrix[16] = {   1, 0, 0, -4,
+    double projectionMatrix[16] = {2.4142135624, 0,	0,	0,
+                                   0,	2.4142135624,	0,	0,
+                                   0,	0,	-1.0202020202,	-2.0202020202,
+                                   0,	0,	-1,	0};
+
+
+    double translationMatrix[16] = {   1, 0, 0, 0,
                                        0, 1, 0, 0,
                                        0, 0, 1, 0,
                                        0, 0, 0, 1 };
@@ -69,7 +71,7 @@ public:
     void RotateY(double z)
     {
         rotationY[0] = cos(z);
-        rotationY[1] = sin(z);
+        rotationY[2] = sin(z);
         rotationY[8] = -sin(z);
         rotationY[10] = cos(z);
     }

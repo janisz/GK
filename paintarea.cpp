@@ -92,11 +92,11 @@ template <typename T> int sgn(T val) {
     return (T(0) <= val) - (val < T(0));
 }
 
-float countNormals(float point11, float point12, float point13,
+double* countNormals(float point11, float point12, float point13,
                    float point21, float point22, float point23,
                    float point31, float point32, float point33)
 {
-float Normal[3];
+    double* Normal = new double[3];
 float Vector1[3];
 float Vector2[3];
 
@@ -114,7 +114,11 @@ Normal[0]=Vector1[1]*Vector2[2]- Vector1[2]*Vector2[1];
 Normal[1]=Vector1[2]*Vector2[0]- Vector1[0]*Vector2[2];
 Normal[2]=Vector1[0]*Vector2[1]- Vector1[1]*Vector2[0];
 
-return Normal[2];
+return Normal;
+}
+
+double dot(double* a, double* b) {
+    return(a[0]*b[0] + a[1]*b[1] + a[2]*b[2]);
 }
 
 
@@ -128,11 +132,24 @@ void PaintArea::paintEvent(QPaintEvent *event)
     {
         point[0] = (point[0]/point[3])*100.0+400.0;
         point[1] = (point[1]/point[3])*100.0+300.0;
-        point[2] = (point[2]/point[3])*100.0+300.0;
+        point[2] = (point[2]/point[3])*100.0;
 
     }
         for (int i=0;i<engine.FacesCount;i++)
         {
+            //back face culling
+            double* N = countNormals(l[engine.facesList[i][0]][0], l[engine.facesList[i][0]][1], l[engine.facesList[i][0]][1],
+                                    l[engine.facesList[i][1]][0], l[engine.facesList[i][1]][1], l[engine.facesList[i][1]][1],
+                                    l[engine.facesList[i][2]][0], l[engine.facesList[i][2]][1], l[engine.facesList[i][2]][1]);
+            double cameraTarget[3] = {-l[engine.facesList[i][0]][0],
+                                      -l[engine.facesList[i][0]][1],
+                                      1000-l[engine.facesList[i][0]][2]};
+            if (dot(cameraTarget, N) <= 0) {
+                delete N;
+                continue;
+            }
+            delete N;
+
 
             QPoint v1(l[engine.facesList[i][0]][0], l[engine.facesList[i][0]][1]);
             QPoint v2(l[engine.facesList[i][1]][0], l[engine.facesList[i][1]][1]);
