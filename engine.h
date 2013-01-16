@@ -14,6 +14,8 @@ class Engine
 public:
     Engine();
 
+    static double *currentMatrix;
+
     double viewMatrix[16] = { 1,	0,	0,	0,
                               0,	-1,	0,	0,
                               0,	0,	1,	-10,

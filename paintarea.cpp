@@ -135,6 +135,12 @@ void PaintArea::paintEvent(QPaintEvent *event)
         point[2] = (point[2]/point[3])*100.0;
 
     }
+
+    for (int i=0;i<800;i++)
+        for (int j=0;j<600;j++)
+        {
+            Polygon::zBuffer[i][j] = 10000;
+        }
         for (int i=0;i<engine.FacesCount;i++)
         {
             //back face culling
@@ -157,9 +163,9 @@ void PaintArea::paintEvent(QPaintEvent *event)
             QPoint v2(l[engine.facesList[i][1]][0], l[engine.facesList[i][1]][1]);
             QPoint v3(l[engine.facesList[i][2]][0], l[engine.facesList[i][2]][1]);
             Polygon *c = new Polygon();
-            c->AddVertex(v1);
-            c->AddVertex(v2);
-            c->AddVertex(v3);
+            c->AddVertex(v1, l[engine.facesList[i][0]][2]);
+            c->AddVertex(v2, l[engine.facesList[i][1]][2]);
+            c->AddVertex(v3, l[engine.facesList[i][2]][2]);
             c->SetColor(Qt::white);
             QImage col = QImage(5,5, QImage::Format_ARGB32);
             col.fill(QColor::fromHsv(qrand() % 256, 255, 190));

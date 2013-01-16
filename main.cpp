@@ -3,7 +3,8 @@
 
 
 Polygon* Shape::ClippingPolygon = 0;
-
+double Polygon::zBuffer[800][600];
+double *Engine::currentMatrix = 0;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

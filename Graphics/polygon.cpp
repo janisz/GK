@@ -32,13 +32,15 @@ void Polygon::Move(QPoint pos)
 }
 
 void Polygon::Draw(QImage &img)
-{
+{   
     if (isFilled)   Fill(img);
-
-    foreach (Edge e, Edges())
+    else
     {
-        Line l(e.first, e.second, lineColor);
-        l.Draw(img);
+        foreach (Edge e, Edges())
+        {
+            Line l(e.first, e.second, lineColor);
+            l.Draw(img);
+        }
     }
 }
 
@@ -62,57 +64,11 @@ QList<Edge> Polygon::Edges()
     return edges;
 }
 
-//bool Inside(QPoint p, Edge e)
-//{
-//    return CrossProductLength(p.x(), p.y(), e.first.x(), e.first.y(), e.second.x(), e.second.y()) >= 0;
-//}
 
-//QPoint ComputeIntersection(QPoint a, QPoint b, Edge e)
-//{
-//    double a1, b1, a2, b2;
-//    if (b.x()-a.x())
-//    {
-//        a1 = (b.y()-a.y())/(b.x()-a.x());
-//        b1 = (a.y()-a1*a.x());
-//    }
-//    if (e.second.x()-e.first.x())
-//    {
-//        a2 = (e.second.y()-e.first.y())/(e.second.x()-e.first.x());
-//        b2 = (e.first.y()-a1*e.first.x());
-//    }
-
-//    int x = (b2-b1)/(a2-a1);
-//    return QPoint(x, a1*x+b1);
-//}
 
 void Polygon::ClipToPolygon(QImage &img)
 {
-//    QList<QPoint> outputList;
-//    outputList.append(vertexs);
 
-//    foreach (Edge clipEdge, ClippingPolygon->Edges())
-//    {
-//        QList<QPoint> inputList = outputList;
-//        outputList.clear();
-//        QPoint S = inputList.last();
-//        foreach (QPoint E, inputList)
-//        {
-//            if (Inside(E, clipEdge))
-//            {
-//                if (!Inside(S, clipEdge))
-//                    outputList.append(ComputeIntersection(S, E, clipEdge));
-//                outputList.append(E);
-//            }
-//            else if (Inside(S, clipEdge))
-//                outputList.append(ComputeIntersection(S, E, clipEdge));
-//            S = E;
-//        }
-//    }
-
-//    Polygon p;
-//    p.vertexs.append(outputList);
-//    qDebug() << p.vertexs;
-//    //p.Draw(img);
 }
 
 bool Inside(QPoint p, Edge e);
@@ -140,7 +96,7 @@ bool Polygon::ClipHLineToPolygon(int &x0, int &y0, int &x1, int &y1)
     return true;
 }
 
-void Polygon::DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img)
+void Polygon::DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img, int Zdx, int z)
 {
     if (y <= 0 || y >= 600) return;
     x0 = x0 < 0 ? 1 : x0; x0 = x0 > 799 ? 799 : x0;
@@ -149,9 +105,13 @@ void Polygon::DrawTexturedHLine(int x0, int x1, int y, int h, int j, QImage &img
 
     if (!ClipHLineToPolygon(x0, y, x1, y)) return;
 
-    for (int i=x0+1; i<=x1; i++)
+    for (int i=x0+1; i<=x1; i++, z+=Zdx)
     {
-        img.setPixel(QPoint(i, y), texture.pixel((i-h)%texture.width(), j%texture.height()));
+        if (zBuffer[i][y] > z )
+        {
+            zBuffer[i][y] = z;
+            img.setPixel(QPoint(i, y), texture.pixel((i-h)%texture.width(), j%texture.height()));
+        }
     }
 }
 
@@ -169,9 +129,30 @@ void Polygon::Fill(QImage &img)
     QList<Edge> activeEdgeList;
     Edge e;
 
+    int xMaxIndex = 0;
+    int yMaxIndex = 0;
+    int xMinIndex = 0;
+    int yMinIndex = 0;
+    for (int i=0;i<3;i++)
+    {
+        if (vertexs[i].x() > vertexs[xMaxIndex].x())
+                xMaxIndex = i;
+        if (vertexs[i].y() > vertexs[yMaxIndex].y())
+                yMaxIndex = i;
+        if (vertexs[i].x() < vertexs[xMinIndex].x())
+                xMinIndex = i;
+        if (vertexs[i].y() < vertexs[yMinIndex].y())
+                yMinIndex = i;
+    }
+    double Zdy = (Z[yMaxIndex]-Z[yMinIndex])/(vertexs[yMaxIndex].y()-vertexs[yMinIndex].y());
+    double Zdx = (Z[xMaxIndex]-Z[xMinIndex])/(vertexs[xMaxIndex].x()-vertexs[xMinIndex].x());
+
     int Ymax = this->GetRect().bottom();
     int Ymin = this->GetRect().top();
     int Xmin = this->GetRect().left();
+
+    int Zmin = std::min(std::min(Z[0], Z[1]), Z[2]);
+    int Zmax = std::max(std::max(Z[0], Z[1]), Z[2]);
 
     for (int i=1;i<vertexs.count();i++)
     {
@@ -194,7 +175,9 @@ void Polygon::Fill(QImage &img)
 
     qSort(edgeList.begin(), edgeList.end(), CompEdges);
 
-    for (int y = Ymin; y < Ymax; y++)
+    int z = Z[yMinIndex];
+
+    for (int y = Ymin; y < Ymax; y++, z += Zdy)
     {
         QVector<int> points;
 
@@ -217,7 +200,8 @@ void Polygon::Fill(QImage &img)
         qSort(points);
         for (int i=0;i<points.count()-1;i+=2)
         {
-            DrawTexturedHLine(points[i], points[i+1], y, Xmin, -Ymin+y, img);
+
+            DrawTexturedHLine(points[i], points[i+1], y, Xmin, -Ymin+y, img, Zdx, z);
         }
         points.clear();
     }

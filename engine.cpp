@@ -78,12 +78,19 @@ QList<double*> Engine::Calculate()
     double *rotation = MatrixMul(MatrixMul(rotationY, rotationZ), rotationX);
     double *translation = MatrixMul(translationMatrix, rotation);
     double *res = MatrixMul(viewMatrix, translation);
+    delete currentMatrix;
+    currentMatrix = MatrixMul(projectionMatrix, res);
     foreach (double* point, vertexsList)
     {
-        double* p1 = MatrixMul(MatrixMul(projectionMatrix, res), point, 1);
+        double* p1 = MatrixMul(currentMatrix, point, 1);
 
         ret.append(p1);
     }
+
+    delete rotation;
+    delete translation;
+    delete res;
+
 
     return ret;
 }
