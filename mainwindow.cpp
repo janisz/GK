@@ -27,19 +27,19 @@ MainWindow::MainWindow(QWidget *parent)
     leftPanelLayout->addWidget(translateLabel);
 
     translateX = new QSlider(Qt::Horizontal);
-    translateX->setMaximum(400);
-    translateX->setMinimum(-400);
+    translateX->setMaximum(800);
+    translateX->setMinimum(-800);
 
     leftPanelLayout->addWidget(translateX);
 
     translateY = new QSlider(Qt::Horizontal);
-    translateY->setMaximum(400);
-    translateY->setMinimum(-400);
+    translateY->setMaximum(800);
+    translateY->setMinimum(-800);
     leftPanelLayout->addWidget(translateY);
 
     translateZ = new QSlider(Qt::Horizontal);
-    translateZ->setMaximum(400);   
-    translateZ->setMinimum(-400);
+    translateZ->setMaximum(800);
+    translateZ->setMinimum(-800);
     leftPanelLayout->addWidget(translateZ);
 
     QLabel *rotateLabel = new QLabel("Rotate");

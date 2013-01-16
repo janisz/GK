@@ -150,6 +150,8 @@ void PaintArea::paintEvent(QPaintEvent *event)
             }
             delete N;
 
+            if (l[engine.facesList[i][0]][2] < 10 || l[engine.facesList[i][1]][2] < 10 || l[engine.facesList[i][2]][2] < 10)
+                continue;
 
             QPoint v1(l[engine.facesList[i][0]][0], l[engine.facesList[i][0]][1]);
             QPoint v2(l[engine.facesList[i][1]][0], l[engine.facesList[i][1]][1]);

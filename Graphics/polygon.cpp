@@ -12,9 +12,10 @@ Polygon::Polygon()
     SetType(Globals::Polygon);
 }
 
-void Polygon::AddVertex(QPoint newVertex)
+void Polygon::AddVertex(QPoint newVertex, double z)
 {
     vertexs.append(newVertex);
+    Z.append(z);
 }
 
 void Polygon::ChangeLastVertex(QPoint vertex)
