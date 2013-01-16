@@ -37,3 +37,8 @@ HEADERS  += mainwindow.h \
     Graphics/aacircle.h \
     Graphics/rectangle.h \
     engine.h
+
+OTHER_FILES += \
+    test.off \
+    cube.off \
+    mushroom.off
