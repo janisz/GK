@@ -150,6 +150,7 @@ void PaintArea::paintEvent(QPaintEvent *event)
             double cameraTarget[3] = {-l[engine.facesList[i][0]][0],
                                       -l[engine.facesList[i][0]][1],
                                       1000-l[engine.facesList[i][0]][2]};
+            double sin = dot(cameraTarget, N);
             if (dot(cameraTarget, N) <= 0) {
                 delete N;
                 continue;
@@ -168,7 +169,7 @@ void PaintArea::paintEvent(QPaintEvent *event)
             c->AddVertex(v3, l[engine.facesList[i][2]][2]);
             c->SetColor(Qt::white);
             QImage col = QImage(5,5, QImage::Format_ARGB32);
-            col.fill(QColor::fromHsv(qrand() % 256, 255, 190));
+            col.fill(QColor::fromHsv(qrand() % 256, 255, (190 * sin/100000 > 220 ? 240 : 190 * sin/100000 + 20)));
             c->SetTexture(col);
             c->isFilled = fillShape;
             Canvas.AddShape(c);

@@ -151,9 +151,6 @@ void Polygon::Fill(QImage &img)
     int Ymin = this->GetRect().top();
     int Xmin = this->GetRect().left();
 
-    int Zmin = std::min(std::min(Z[0], Z[1]), Z[2]);
-    int Zmax = std::max(std::max(Z[0], Z[1]), Z[2]);
-
     for (int i=1;i<vertexs.count();i++)
     {
         e.first = vertexs[i-1];
@@ -175,7 +172,7 @@ void Polygon::Fill(QImage &img)
 
     qSort(edgeList.begin(), edgeList.end(), CompEdges);
 
-    int z = Z[yMinIndex];
+    double z = Z[yMinIndex];
 
     for (int y = Ymin; y < Ymax; y++, z += Zdy)
     {
